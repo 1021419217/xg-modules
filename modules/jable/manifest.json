@@ -1,0 +1,25 @@
+{
+  "id": "jable",
+  "name": "Jable",
+  "version": "1.0.6",
+  "description": "Jable - JAV streaming, direct HLS",
+  "runtime": "js",
+  "api": 1,
+  "adult": true,
+  "hosts": [
+    "jable.tv",
+    "fs1.app",
+    "*.jable.tv",
+    "*.fs1.app",
+    "*.mushroomtrack.com",
+    "assets-cdn.jable.tv"
+  ],
+  "capabilities": [
+    "search"
+  ],
+  "baseUrl": "https://jable.tv",
+  "browserFingerprint": true,
+  "aliases": [
+    "jable.tv"
+  ]
+}

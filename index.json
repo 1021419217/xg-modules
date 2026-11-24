@@ -1,0 +1,575 @@
+{
+  "format": 1,
+  "modules": [
+    {
+      "id": "5lxtv",
+      "name": "5L",
+      "version": "1.0.0",
+      "description": "分类视频 · 搜索 · 女优二级页",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/5lxtv",
+      "sha256": {
+        "manifest.json": "7c4af0792a624a33a5ac47d5b5e2b5ced3970a8a30bc79984e2475581e4772ed",
+        "main.js": "7173562a2032df324e7ec8198296768e4536873c197a2161ef225d0e2fb744fa"
+      }
+    },
+    {
+      "id": "av8d",
+      "name": "AV8D",
+      "version": "1.0.4",
+      "description": "AV8D - 免費高畫質AV線上看（有碼/無碼/素人/FC2）。1.0.4：「最新」不再无限加载重复内容。",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/av8d",
+      "sha256": {
+        "manifest.json": "763488c354001f96bd91a56cf0323005c117c963180a6c28f0a1429f2898cf0a",
+        "main.js": "2363b8e1e9b2e038fd179cc5d1eeb1447a6de45735ad1aab78717ae83194543d"
+      }
+    },
+    {
+      "id": "avple",
+      "name": "AVPLE",
+      "version": "1.0.2",
+      "description": "分類视频 · 搜索 · 片商/女优二级页",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/avple",
+      "sha256": {
+        "manifest.json": "47adc3cee4c0162d3f84d94e4c3089c7b66a8f320842d57d1ac43d152c71310b",
+        "main.js": "5355bf06f9f52734125215a7e96b6d31692fad04403e4d7e19b486600b095929"
+      }
+    },
+    {
+      "id": "beabox",
+      "name": "笔盒",
+      "version": "1.0.1",
+      "description": "分类视频 · 在线搜索",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/beabox",
+      "sha256": {
+        "manifest.json": "a9bad28677eefb7b454647c031694f2fb3d279dbde24a423d081349578d4928a",
+        "main.js": "0daff652429bdc456f7cd873f6fbe4bdf81a33ef634618239313430f1de4ab57"
+      }
+    },
+    {
+      "id": "cg91",
+      "name": "91吃瓜",
+      "version": "1.0.0",
+      "description": "吃瓜短视频 · 分类 · 搜索 · 上传者二级页",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/cg91",
+      "sha256": {
+        "manifest.json": "77e9a82e25429901d6ed8b74256b91cdf6bba53121056f5603801f1216151f6e",
+        "main.js": "f9fbf06b89e784360bb0586f0a1a6aba36e4f1a16ddd1f5fedc65407a3653082"
+      }
+    },
+    {
+      "id": "chaoliu",
+      "name": "潮流AV",
+      "version": "1.0.9",
+      "description": "分类视频 · 在线搜索 · 1080P/720P",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/chaoliu",
+      "sha256": {
+        "manifest.json": "51462211e76b1ecac9fe83cecf2dcb93f4738f96c493703801ff4ac63acc6b6c",
+        "main.js": "080f2fa743829117a99885cfd42914b8b7203cbde7c8aa047fcb852db0b13755"
+      }
+    },
+    {
+      "id": "crdj",
+      "name": "91短剧",
+      "version": "1.0.0",
+      "description": "短剧 · 在线搜索",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/crdj",
+      "sha256": {
+        "manifest.json": "6331c40e889f449b62eb31efe447257ae0d4749fe681d0f8d7f763ad6134eda6",
+        "main.js": "82b3aa4dd64e45ebaad04af11670d4fc06c058ca76e472b8e151fda325463575"
+      }
+    },
+    {
+      "id": "dsd",
+      "name": "帝果",
+      "version": "1.0.1",
+      "description": "分类视频 · 在线搜索",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/dsd",
+      "sha256": {
+        "manifest.json": "20ae6c86a0d72e174eb8004ad32905bdefdec2a323c40a24bf65445221cc6565",
+        "main.js": "265afa272ac65273ec5d01b815d7905de3566c4329b57e131f854ec8105dbbbc"
+      }
+    },
+    {
+      "id": "eporner",
+      "name": "EPORNER",
+      "version": "1.2.0",
+      "description": "EPORNER：最新 / 最佳 / 评分 / 最多观看 + 分类 + 搜索，官方 JSON 接口，HLS（最高 1080p）。界面英文。",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/eporner",
+      "sha256": {
+        "manifest.json": "79b395b9417e48869ff8ee4f8b6d4f89c82ed5d961f4d5e632d0d6e60fc6273d",
+        "main.js": "609d47f1816a8e833a30e0a44d8e2d30e89458d4df96f05d815ddcd3c3b1e8e8"
+      }
+    },
+    {
+      "id": "hanime1",
+      "name": "Hanime1",
+      "version": "1.0.5",
+      "description": "分类视频 · 在线搜索 · 多清晰度",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/hanime1",
+      "sha256": {
+        "manifest.json": "55db1391836a1190e97e434f45eeaab66d98d3b1dccfee5573e0d987e620562f",
+        "main.js": "efc4f8156f818f5754bfb622a9535973ca7e25af6786b4866a250cd11e890289"
+      }
+    },
+    {
+      "id": "hanxiaoquan",
+      "name": "韩小圈",
+      "version": "1.0.1",
+      "description": "韩剧 · 韩国电影 · 综艺动漫",
+      "api": 1,
+      "adult": false,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/hanxiaoquan",
+      "sha256": {
+        "manifest.json": "0e4df821ae106434135d9697fe6f6bf26e4cc4b0f8f51811250f2ef850bf5d62",
+        "main.js": "fb5237db127315994456dac11bd392867cf3d24beab2cfc17f1d0b6cc2be6f05"
+      }
+    },
+    {
+      "id": "heitao",
+      "name": "黑桃",
+      "version": "1.0.1",
+      "description": "分类短剧 · 在线搜索",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/heitao",
+      "sha256": {
+        "manifest.json": "a5ea87f19137fdb4d770d249faae97dcda48b4c320ade9b59658b69f680897af",
+        "main.js": "5f59ad4e21da7d272ee1efd76fd21e18b9f640524006325a35f5d437147b75a1"
+      }
+    },
+    {
+      "id": "hongguo",
+      "name": "红果",
+      "version": "1.0.4",
+      "description": "短剧 · 漫剧 · AI 剧 · 听书",
+      "api": 1,
+      "adult": false,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/hongguo",
+      "sha256": {
+        "manifest.json": "2828dcb8225eaf13fefe9fd8045753a4ff36f6c67b134dd1865bb7b7ff1e74fe",
+        "main.js": "66a7a6d296b274d30f060ec2dfce5e4015be09ae0655eb505f8a348c9612f1d1"
+      }
+    },
+    {
+      "id": "hscangku",
+      "name": "黄色仓库",
+      "version": "1.2.2",
+      "description": "黄色仓库（hsck）：日韩AV / 国产系列 / 欧美 / 成人动漫 + 搜索，HLS。详情缓存播放凭证，点播放一次请求出画面。1.2.0：修主域名 301 丢路径导致「搜什么都返回首页」，改为域名池自动切换；含主演/作者识别与作者页。",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/hscangku",
+      "sha256": {
+        "manifest.json": "abab89ead102ca2e579411bd6901d24f79795e5caae0659cda40df0e8d0e1b14",
+        "main.js": "93da41c3d377aae0c3ef5c742b277ad697885471b16e176cbe1e13885ac14cfc"
+      }
+    },
+    {
+      "id": "huangguo-video",
+      "name": "黄果视频",
+      "version": "1.0.1",
+      "description": "视频剧集",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/huangguo-video",
+      "sha256": {
+        "manifest.json": "a08630adbd41b4856b251aa1f5588bbe5d8087147c823c75a70f176d5f8ab2d4",
+        "main.js": "317cc53266d1493b510e6d37cfd255a88e552224a469e0b96d41a8bfa21dc62e"
+      }
+    },
+    {
+      "id": "huangguoai",
+      "name": "黄果 AI",
+      "version": "1.0.1",
+      "description": "AI 短剧",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/huangguoai",
+      "sha256": {
+        "manifest.json": "7439d054b4672d1dc268bacfc886650e5142531905ff0fadc363e07af67efb61",
+        "main.js": "5b9e86ac42295b94b2abe1c8ee6a09cb2d86e01e45e44809f34ecb8b1cb7c5d0"
+      }
+    },
+    {
+      "id": "huangju",
+      "name": "剧果",
+      "version": "1.0.1",
+      "description": "热门 · 最新 · 分类短剧",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/huangju",
+      "sha256": {
+        "manifest.json": "6a0b6e6a0876be2585a3f165d16b38209794029fa799482e283d7650117c36bf",
+        "main.js": "33dd8316c42f3e0fb34b189c50a6414e983a4b7b4cbe05bbbc8f24d20d6bff5b"
+      }
+    },
+    {
+      "id": "huangtao",
+      "name": "黄桃",
+      "version": "1.0.0",
+      "description": "AI 短剧 · 在线搜索",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/huangtao",
+      "sha256": {
+        "manifest.json": "9877f270df7bae4ae80dff840faf314fde055a148b146b1f48c8717917902291",
+        "main.js": "cf46b5ea15e3d79084adb0fe8c591e3f2db5549f66459775fef56a08bd8c27d5"
+      }
+    },
+    {
+      "id": "ikanbot",
+      "name": "爱看机器人",
+      "version": "1.0.4",
+      "description": "爱看机器人（ikanbot）——全网聚合搜索式影视源，多线路可切换",
+      "api": 1,
+      "adult": false,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/ikanbot",
+      "sha256": {
+        "manifest.json": "aa973e87f75aaee68e36881a3bda7b5eebaea80788b70e3a9141dcf9006fcc1a",
+        "main.js": "db1b3ddc6477f3cbb738c73f407e63b530831916b64410f9a002fc2f86b04a92"
+      }
+    },
+    {
+      "id": "jable",
+      "name": "Jable",
+      "version": "1.0.6",
+      "description": "Jable - JAV streaming, direct HLS",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/jable",
+      "sha256": {
+        "manifest.json": "f0916414eb8a1215c0feda0bc64b6a253885501045908f6b4998ad39da4d1500",
+        "main.js": "10ac43468aa8e2c36a49ffecad062051a97308043036f38b012ad81864950145"
+      }
+    },
+    {
+      "id": "javrate",
+      "name": "Javrate",
+      "version": "1.0.4",
+      "description": "Javrate - 正妹AV / 日本A片 / 國產AV（最新、今日優選、無碼、有碼、中文字幕）",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/javrate",
+      "sha256": {
+        "manifest.json": "27b3d1770f46c35a3db3a64094180d9b1217831fbb87d154b4a83d786213dba1",
+        "main.js": "93e365226c622aa9567c4f0f64dc42adfa4cdf9ca30d012a158d79f54f10128f"
+      }
+    },
+    {
+      "id": "javtiful",
+      "name": "Javtiful",
+      "version": "1.0.1",
+      "description": "Javtiful：最新、分类、频道、女优与搜索；详情页取 ticket，POST playback 返回 MP4/HLS 线路，播放走宿主媒体代理。",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/javtiful",
+      "sha256": {
+        "manifest.json": "06cd3244fb86f2d142ee4dc90403afa200158888302edf729944af5dde7a1b28",
+        "main.js": "d1b4c5a3cb919600bb9cda5a4ec63e514865b92617f364d6ea1ae849195669b7"
+      }
+    },
+    {
+      "id": "kanliao",
+      "name": "今日看料",
+      "version": "1.0.1",
+      "description": "吃瓜短视频 · 分类 · 搜索 · 上传者二级页",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/kanliao",
+      "sha256": {
+        "manifest.json": "89d88529e2672e2243ff06089bc7cf18d16c66f39663a02bdc1b976bb8d8f854",
+        "main.js": "71f3569d308dd36dee0e8180b2f9fe36277ec50591f27fe90696c6ccc9e8a33b"
+      }
+    },
+    {
+      "id": "madou",
+      "name": "麻豆社",
+      "version": "1.0.0",
+      "description": "麻豆社（madou.club）：最新 / 点赞排行 / 12 个频道 + 搜索，HLS（AES-128）。中文内容。",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/madou",
+      "sha256": {
+        "manifest.json": "d8e001d7aa237f7549bed3363d58b4039e307cad64f87b2d19d734881d5efc77",
+        "main.js": "923344bfb7ad106730339015fc2fa4aef8aa3b2ccde9f7f8ddc72a01aec3b8bf"
+      }
+    },
+    {
+      "id": "missav",
+      "name": "MissAV",
+      "version": "1.0.7",
+      "description": "分类视频 · 在线搜索",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/missav",
+      "sha256": {
+        "manifest.json": "4c5df9fcd351a694f8857e0d2fb203012ce0c1f7f309705a7ddf3e4de89b78f2",
+        "main.js": "1ac11bf92971d00140a862ca53834bf92620a184dffbb1572070dc7dc8c4c4f0"
+      }
+    },
+    {
+      "id": "p91",
+      "name": "91porn",
+      "version": "3.4.6",
+      "description": "91porn：首页最新 + 10 分类 + 搜索。播放地址走 /vlk.php（页面直链在 CDN 上残缺），给出 2 条不同 CDN 的线路；详情 2 请求，点播放 0 请求，MP4 走 Range。3.3.6 起按 43 位 UID 解析上传者（私信锚点 + 信息表双重兜底），支持点作者看其全部作品。 (适配 2026-11 新卡片: vci)",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/p91",
+      "sha256": {
+        "manifest.json": "803102115116971b3bfbd6ad4e9084e24ee743dbdc5c8160cb90d87e99c47127",
+        "main.js": "2b33b672bef54c543c1cb5ff1a5e9f1ec8b8e47389954f8584a058919968575f"
+      }
+    },
+    {
+      "id": "p91a",
+      "name": "91porna",
+      "version": "1.10.0",
+      "description": "91porna：10 个分类 + 搜索，单集长视频，HLS（AES-128）。详情页阶段预取播放列表，点播放零请求。。1.10.0：新增作者/上传者识别与作者二级页。",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/p91a",
+      "sha256": {
+        "manifest.json": "ef16c9e3e0b52ec5571071eec52c59389c9a6d7a316bf74b8c685bdc9ba40783",
+        "main.js": "39c362ab43fd7d7f6066f6b5cf2bb33508652385e5c15265a0f0ebd91e001cd2"
+      }
+    },
+    {
+      "id": "p91y",
+      "name": "九色 91porny",
+      "version": "1.2.0",
+      "description": "91porny（九色）：精品/蝌蚪/SWAG/麻豆 4 个分类 + 搜索。HLS 与 MP4 都支持（MP4 自动包成 HLS），详情页预取，点播放零请求。。1.2.0：新增作者/上传者识别与作者二级页。",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/p91y",
+      "sha256": {
+        "manifest.json": "26edfcc26875b3675960e8a768a586b1b539f347763d0d7eeffdc9427723db64",
+        "main.js": "056799737b6e4bbe236ba624f8d634dd0425b74bbb05d97ffc7c92d9dd0e733f"
+      }
+    },
+    {
+      "id": "pornhub",
+      "name": "Pornhub",
+      "version": "1.2.0",
+      "description": "Pornhub：热门 / 最新 / 本周最多 / 本月好评 + 搜索，1080p HLS。自带中文界面，详情页预取播放列表，点播放零请求。。1.2.0：新增上传者/模特识别与作者二级页。",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/pornhub",
+      "sha256": {
+        "manifest.json": "e39acf6d1f04e3786222fe15592d8ab7616be8447be86d0a0454498172ad1c06",
+        "main.js": "1f6e8b64c35f8f033abcfe968595fbf1f970d3be3ac7e13eeed028df40f73085"
+      }
+    },
+    {
+      "id": "ppp",
+      "name": "PPP.Porn",
+      "version": "1.1.0",
+      "description": "PPP.Porn（精選亞洲素人）：最新 + 12 個分類 + 搜尋，HLS（AES-128，4 秒分片，可隨意拖動）。",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/ppp",
+      "sha256": {
+        "manifest.json": "35441dfbf92014db38156e177c26456bd11252b208e19129b7cfd3fc33d164e6",
+        "main.js": "42e2d45bce78dbbe1039243c3405c4270f29738aab1686585493efa74b4646ce"
+      }
+    },
+    {
+      "id": "spankbang",
+      "name": "SpankBang",
+      "version": "1.0.1",
+      "description": "SpankBang - 免费成人视频（New / Trending / 分类 / 搜索，含 HLS 多码率）。站点在 Cloudflare 后面，首次使用需在 App 内过一次人机验证。",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/spankbang",
+      "sha256": {
+        "manifest.json": "0696eb5e1f7a21fb337d89c1038ce7990a469e19a4f30501ed3425f9ef3ed8e5",
+        "main.js": "23ac2afbaf3f20b45afe0030cfba4a11270977595ce6a6fcf1de632618b81ad5"
+      }
+    },
+    {
+      "id": "viral",
+      "name": "ViralXXX",
+      "version": "1.8.1",
+      "description": "viralxxxporn.com（病毒式 XXX / OnlyFans 泄露）：中文界面，10 个分类 + 搜索，单集长视频，MP4 直链（480p/720p/1080p）。",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/viral",
+      "sha256": {
+        "manifest.json": "3a0d35b09ada8786be48e9a7f6fba449892ae0198a7efdc73d0492dc96a8f96a",
+        "main.js": "a5e5b9edb98ec972081c1db913605e7cfc881d30c25e2a46f3091a6f53c92c2a"
+      }
+    },
+    {
+      "id": "whostv",
+      "name": "whos.tv",
+      "version": "1.0.2",
+      "description": "whos.tv（原 bad.news）- 日本AV在線看，含排行榜",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/whostv",
+      "sha256": {
+        "manifest.json": "8f69ddf8f29cab1ea04e929cb51248328ec574afd5328707c485e5ed4d995f21",
+        "main.js": "e581495fde034168711f0efcb73b263503bc89980b1b95bf2edf4cf196fd1d43"
+      }
+    },
+    {
+      "id": "xchina",
+      "name": "小黄书 xChina",
+      "version": "1.3.0",
+      "description": "xChina（小黄书）：最新 + 5 个分类 + 搜索，单集长视频，HLS（AES-128）。1.3.0 起解析详情页演员/模特（JSON-LD actor + 作者胶囊），支持点作者看其全部作品，并带时长/系列/发行信息。",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/xchina",
+      "sha256": {
+        "manifest.json": "bb4194bbc33036d16e7788b7fee4f3514600f4666b8ade18287ee683c2618c64",
+        "main.js": "afb9775cd2895ff465ba52d527895adcef93283135a08b2ded0ebb9775961365"
+      }
+    },
+    {
+      "id": "xgroovy",
+      "name": "XGroovy",
+      "version": "1.0.3",
+      "description": "XGroovy：最新、分类、搜索、模特/频道信息与多清晰度 MP4 播放。",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/xgroovy",
+      "sha256": {
+        "manifest.json": "3e106e06c7de12f38f3ed17fff235a0e1c6785d6e55e7bfd74fc37359deeef72",
+        "main.js": "d8606e37a3714d3224df8397e077eae86a61101d21bae1c37d9587906aa8fe6e"
+      }
+    },
+    {
+      "id": "xvideos2",
+      "name": "XVIDEOS",
+      "version": "1.3.0",
+      "description": "XVIDEOS：最新 / 本月最佳 / 标签 / 分类 + 搜索，自带中文界面，HLS（最高 1080p）。1.3.0：详情补全上传者、女优、标签与发布日期，卡片显示时长 / 清晰度 / 字幕；播放增加结构化数据与 mp4 兜底，修复部分视频提示「没有找到播放地址」。",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/xvideos2",
+      "sha256": {
+        "manifest.json": "32eb7231adaea5d0c7769ab4fbb04fbc0a864af96d83f127faea16fd21227330",
+        "main.js": "9851a8d7f6c55a3008293a63c064ccdfd9ce1712bac12559f868bac473461459"
+      }
+    },
+    {
+      "id": "yeguo",
+      "name": "野果",
+      "version": "1.0.1",
+      "description": "分类短剧 · 在线搜索",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/yeguo",
+      "sha256": {
+        "manifest.json": "fccfda9ddd69c70c3fd339e9f02be77a6b62737324b9f94460ff409c6d29755e",
+        "main.js": "d6d98cb28188ae73a04439746381a5057e920bd4682bfd730ffdd0b39402aba1"
+      }
+    },
+    {
+      "id": "yesheai",
+      "name": "夜社",
+      "version": "1.0.0",
+      "description": "短剧 · 在线搜索",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.0",
+      "path": "modules/yesheai",
+      "sha256": {
+        "manifest.json": "79a239ccf55f3e4443da9023551bb0a883932ecbdc2e3b9faf247565db47715d",
+        "main.js": "3753374bcfe8f9b7130d1597182214099fb7c9b2df088cd0ac99f5c8a64478e6"
+      }
+    }
+  ]
+}
