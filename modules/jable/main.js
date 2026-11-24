@@ -417,6 +417,19 @@ function search(page, query) {
   return { items: result.items, hasMore: result.hasMore };
 }
 
+/// App 点「作者」时调用：模特页 /models/{hash}/，支持 ?page=N
+function authorPage(authorId, authorName, page) {
+  const id = String(authorId || '').trim();
+  if (!/^[A-Za-z0-9]{6,64}$/.test(id)) {
+    return { items: [], hasMore: false, warning: '该演员没有可访问的作品页' };
+  }
+  const p = Number(page || 1) < 1 ? 1 : Number(page || 1);
+  const path = '/models/' + id + '/' + (p > 1 ? '?page=' + p : '');
+  const response = fetchPage(path);
+  const result = parseList(response.text, p, response.base);
+  return { items: result.items, hasMore: result.hasMore };
+}
+
 function detailPath(sourceId) {
   return '/videos/' + sourceId + '/';
 }
@@ -432,12 +445,16 @@ function parseDetail(html, sourceId, base) {
   }
   const modelBlock = /<div class="models">([\s\S]*?)<\/div>/.exec(html);
   const actors = [];
+  // 模特（演员）链接：<a class="model" href="/models/{hash}/"><span title="大谷双葉">大</span>
+  let leadModelId = '';
   if (modelBlock) {
     const models = modelBlock[1].match(/title="([^"]+)"/g) || [];
     for (const entry of models) {
       const name = clean(entry.replace(/^title="/, '').replace(/"$/, ''));
       if (name !== '') actors.push(name);
     }
+    const href = /href="[^"]*\/models\/([A-Za-z0-9]+)\/?"/.exec(modelBlock[1]);
+    if (href) leadModelId = href[1];
   }
   const date = /上市於\s*([0-9-]+)/.exec(html);
   const views = /icon-eye[\s\S]{0,80}?<\/svg>\s*<span[^>]*>([^<]+)<\/span>/.exec(html);
@@ -454,8 +471,7 @@ function parseDetail(html, sourceId, base) {
     const value = count(clean(views[1]));
     if (value > 0) facts.push(value + ' 次观看');
   }
-  return {
-    drama: {
+  const drama = {
       id: host.dramaId(sourceId),
       source: host.source,
       sourceId: sourceId,
@@ -467,11 +483,16 @@ function parseDetail(html, sourceId, base) {
       tags: tags,
       totalEpisode: 1,
       episodeCount: 1,
-      author: actors.length > 0 ? actors.join(' / ') : '',
-    },
-    tags: tags,
-    actors: actors,
+      // actors 之前放在 drama 外面，App 只认 drama.actors，界面永远读不到
+      actors: actors,
+      author: actors.length > 0 ? actors[0] : '',
   };
+  if (leadModelId) {
+    drama.authorId = leadModelId;
+    drama.authorUrl = base + '/models/' + leadModelId + '/';
+  }
+  if (date) drama.onlineDate = clean(date[1]);
+  return { drama: drama, tags: tags, actors: actors };
 }
 
 function detail(sourceId) {
@@ -538,6 +559,7 @@ module.exports = {
   validCategory,
   catalogPage,
   search,
+  author: authorPage,
   detail,
   resolveMedia,
 };

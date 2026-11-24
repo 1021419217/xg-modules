@@ -6,6 +6,10 @@ const slugPattern = /^[a-z0-9][a-z0-9._-]{0,127}$/;
 const cardPattern = /\/(?:dm[0-9]+\/)?cn\/([a-z0-9][a-z0-9._-]{0,127})\/?$/;
 const genrePattern = /\/(?:dm[0-9]+\/)?cn\/genres\/([^/?#]+)\/?$/;
 const pagePattern = /[?&]page=([0-9]{1,7})/;
+// 女优页 /cn/actresses/{名字} 与片商页 /cn/makers/{名字}；
+// 注意导航里的 /cn/actresses（女优一览）没有名字段，不会误匹配。
+const actressPattern = /\/(?:dm[0-9]+\/)?cn\/actresses\/([^/?#]+)\/?$/;
+const makerPattern = /\/(?:dm[0-9]+\/)?cn\/makers\/([^/?#]+)\/?$/;
 // 播放地址挂在「任意 CDN 域 / UUID / playlist.m3u8（或 NNNp/）」下。站点会更换 CDN 域名，
 // 写死 surrit.com 后在换域当天就整站解析失败（「未解析到播放地址」），所以按结构匹配，
 // 命中多条时再优先挑 surrit.com 主域。
@@ -321,6 +325,45 @@ function hasMorePages(document, page) {
   return maxPage > page;
 }
 
+function actressSlug(href) {
+  return pathMatch(href, actressPattern);
+}
+
+function makerSlug(href) {
+  return pathMatch(href, makerPattern);
+}
+
+/// 详情页里的女优名（界面上是 <a href="…/cn/actresses/花守夏歩">花守夏歩</a>）
+/// /cn/actresses/ 下有排行、总览这类非具体女优的页面，要跳过
+const ACTRESS_RESERVED = ["ranking", "new", "popular", "all", "tags", "debut"];
+
+function actressesOf(document) {
+  const out = [];
+  let leadPath = "";
+  for (const anchor of htmlNodes(document, tagged("a"))) {
+    const href = htmlAttr(anchor, "href");
+    const slug = actressSlug(href);
+    if (slug === "" || ACTRESS_RESERVED.indexOf(slug.toLowerCase()) >= 0) continue;
+    // 站点把名字写成「花守夏步 (花守夏歩)」（简体 + 繁体），只留主名
+    let text = htmlText(anchor).replace(/\s*\([^)]*\)\s*$/, "").trim();
+    if (text === "" || out.indexOf(text) >= 0 || Array.from(text).length > 48) continue;
+    out.push(text);
+    if (leadPath === "") leadPath = href;
+    if (out.length >= 8) break;
+  }
+  return { names: out, leadPath: leadPath };
+}
+
+/// 片商（发行商）名，取第一个
+function makerOf(document) {
+  for (const anchor of htmlNodes(document, tagged("a"))) {
+    if (makerSlug(htmlAttr(anchor, "href")) === "") continue;
+    const text = htmlText(anchor);
+    if (text !== "" && Array.from(text).length <= 48) return text;
+  }
+  return "";
+}
+
 function tagsOf(document) {
   const tags = [];
   for (const anchor of htmlNodes(document, tagged("a"))) {
@@ -442,6 +485,19 @@ function fetchDocument(address) {
   return htmlTree(host.fetchText({ url: address, referer: siteBaseUrl + "/", userAgent }).body);
 }
 
+/// App 点「作者/女优」时调用：女优作品页 /cn/actresses/{名字}，支持 ?page=N
+function authorPage(authorId, authorName, page) {
+  const name = String(authorName || authorId || "").trim();
+  if (name === "" || name.length > 64) {
+    return { items: [], hasMore: false, warning: "该女优没有可访问的作品页" };
+  }
+  const p = Number(page || 1) < 1 ? 1 : Number(page || 1);
+  const address = siteBaseUrl + "/cn/actresses/" + pathEscape(name) + "?page=" + p;
+  const document = fetchDocument(address);
+  const items = parseCards(document);
+  return { items: items, hasMore: hasMorePages(document, p) };
+}
+
 function fetchCatalogPage(page, category, query) {
   if (page < 1 || page > 1000000 || query.length > 256 || !validCategory(category)) {
     throw new Error("MissAV 目录查询参数无效");
@@ -489,6 +545,7 @@ function rankingPage(boardId, page) {
 module.exports = {
   validCategory,
   rankingPage,
+  author: authorPage,
 
   categories() {
     const document = fetchDocument(siteBaseUrl + "/cn/genres");
@@ -559,6 +616,17 @@ module.exports = {
       totalEpisode: 1,
       episodeCount: 1,
     };
+    // 女优 / 片商：站点详情页有 /cn/actresses/{名字} 和 /cn/makers/{名字} 链接
+    const actresses = actressesOf(document);
+    if (actresses.names.length > 0) {
+      drama.actors = actresses.names;
+      drama.author = actresses.names[0];
+      // authorId 用女优名（该站女优页就是以名字作路径）
+      drama.authorId = actresses.names[0];
+      if (actresses.leadPath !== "") drama.authorUrl = actresses.leadPath;
+    }
+    const maker = makerOf(document);
+    if (maker !== "") drama.maker = maker;
     const chapter = {
       id: host.chapterId(sourceId, sourceId),
       source: host.source,
