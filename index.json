@@ -9,7 +9,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/5lxtv",
       "sha256": {
         "manifest.json": "7c4af0792a624a33a5ac47d5b5e2b5ced3970a8a30bc79984e2475581e4772ed",
@@ -24,7 +24,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/av8d",
       "sha256": {
         "manifest.json": "763488c354001f96bd91a56cf0323005c117c963180a6c28f0a1429f2898cf0a",
@@ -39,7 +39,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/avple",
       "sha256": {
         "manifest.json": "47adc3cee4c0162d3f84d94e4c3089c7b66a8f320842d57d1ac43d152c71310b",
@@ -54,7 +54,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/beabox",
       "sha256": {
         "manifest.json": "a9bad28677eefb7b454647c031694f2fb3d279dbde24a423d081349578d4928a",
@@ -69,7 +69,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/cg91",
       "sha256": {
         "manifest.json": "77e9a82e25429901d6ed8b74256b91cdf6bba53121056f5603801f1216151f6e",
@@ -84,7 +84,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/chaoliu",
       "sha256": {
         "manifest.json": "51462211e76b1ecac9fe83cecf2dcb93f4738f96c493703801ff4ac63acc6b6c",
@@ -99,7 +99,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/crdj",
       "sha256": {
         "manifest.json": "6331c40e889f449b62eb31efe447257ae0d4749fe681d0f8d7f763ad6134eda6",
@@ -114,7 +114,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/dsd",
       "sha256": {
         "manifest.json": "20ae6c86a0d72e174eb8004ad32905bdefdec2a323c40a24bf65445221cc6565",
@@ -129,7 +129,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/eporner",
       "sha256": {
         "manifest.json": "79b395b9417e48869ff8ee4f8b6d4f89c82ed5d961f4d5e632d0d6e60fc6273d",
@@ -144,7 +144,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/hanime1",
       "sha256": {
         "manifest.json": "55db1391836a1190e97e434f45eeaab66d98d3b1dccfee5573e0d987e620562f",
@@ -159,7 +159,7 @@
       "api": 1,
       "adult": false,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/hanxiaoquan",
       "sha256": {
         "manifest.json": "0e4df821ae106434135d9697fe6f6bf26e4cc4b0f8f51811250f2ef850bf5d62",
@@ -174,7 +174,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/heitao",
       "sha256": {
         "manifest.json": "a5ea87f19137fdb4d770d249faae97dcda48b4c320ade9b59658b69f680897af",
@@ -189,7 +189,7 @@
       "api": 1,
       "adult": false,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/hongguo",
       "sha256": {
         "manifest.json": "2828dcb8225eaf13fefe9fd8045753a4ff36f6c67b134dd1865bb7b7ff1e74fe",
@@ -204,7 +204,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/hscangku",
       "sha256": {
         "manifest.json": "abab89ead102ca2e579411bd6901d24f79795e5caae0659cda40df0e8d0e1b14",
@@ -219,7 +219,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/huangguo-video",
       "sha256": {
         "manifest.json": "a08630adbd41b4856b251aa1f5588bbe5d8087147c823c75a70f176d5f8ab2d4",
@@ -234,7 +234,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/huangguoai",
       "sha256": {
         "manifest.json": "7439d054b4672d1dc268bacfc886650e5142531905ff0fadc363e07af67efb61",
@@ -249,7 +249,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/huangju",
       "sha256": {
         "manifest.json": "6a0b6e6a0876be2585a3f165d16b38209794029fa799482e283d7650117c36bf",
@@ -264,7 +264,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/huangtao",
       "sha256": {
         "manifest.json": "9877f270df7bae4ae80dff840faf314fde055a148b146b1f48c8717917902291",
@@ -279,7 +279,7 @@
       "api": 1,
       "adult": false,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.5",
+      "tag": "v1.0.6",
       "path": "modules/ikanbot",
       "sha256": {
         "manifest.json": "ee4cc7ed52548bbfebaf8bb85871776ce665a645c7dedef1d0c93af01667bdaa",
@@ -294,7 +294,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/jable",
       "sha256": {
         "manifest.json": "f0916414eb8a1215c0feda0bc64b6a253885501045908f6b4998ad39da4d1500",
@@ -309,7 +309,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/javrate",
       "sha256": {
         "manifest.json": "27b3d1770f46c35a3db3a64094180d9b1217831fbb87d154b4a83d786213dba1",
@@ -324,7 +324,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/javtiful",
       "sha256": {
         "manifest.json": "06cd3244fb86f2d142ee4dc90403afa200158888302edf729944af5dde7a1b28",
@@ -339,7 +339,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/kanliao",
       "sha256": {
         "manifest.json": "89d88529e2672e2243ff06089bc7cf18d16c66f39663a02bdc1b976bb8d8f854",
@@ -354,7 +354,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/madou",
       "sha256": {
         "manifest.json": "d8e001d7aa237f7549bed3363d58b4039e307cad64f87b2d19d734881d5efc77",
@@ -369,7 +369,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/missav",
       "sha256": {
         "manifest.json": "4c5df9fcd351a694f8857e0d2fb203012ce0c1f7f309705a7ddf3e4de89b78f2",
@@ -384,7 +384,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/p91",
       "sha256": {
         "manifest.json": "803102115116971b3bfbd6ad4e9084e24ee743dbdc5c8160cb90d87e99c47127",
@@ -399,7 +399,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/p91a",
       "sha256": {
         "manifest.json": "ef16c9e3e0b52ec5571071eec52c59389c9a6d7a316bf74b8c685bdc9ba40783",
@@ -414,7 +414,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/p91y",
       "sha256": {
         "manifest.json": "26edfcc26875b3675960e8a768a586b1b539f347763d0d7eeffdc9427723db64",
@@ -429,7 +429,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/pornhub",
       "sha256": {
         "manifest.json": "e39acf6d1f04e3786222fe15592d8ab7616be8447be86d0a0454498172ad1c06",
@@ -444,7 +444,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/ppp",
       "sha256": {
         "manifest.json": "35441dfbf92014db38156e177c26456bd11252b208e19129b7cfd3fc33d164e6",
@@ -459,7 +459,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/spankbang",
       "sha256": {
         "manifest.json": "0696eb5e1f7a21fb337d89c1038ce7990a469e19a4f30501ed3425f9ef3ed8e5",
@@ -474,7 +474,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/viral",
       "sha256": {
         "manifest.json": "3a0d35b09ada8786be48e9a7f6fba449892ae0198a7efdc73d0492dc96a8f96a",
@@ -489,7 +489,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/whostv",
       "sha256": {
         "manifest.json": "8f69ddf8f29cab1ea04e929cb51248328ec574afd5328707c485e5ed4d995f21",
@@ -504,7 +504,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/xchina",
       "sha256": {
         "manifest.json": "bb4194bbc33036d16e7788b7fee4f3514600f4666b8ade18287ee683c2618c64",
@@ -519,11 +519,26 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/xgroovy",
       "sha256": {
         "manifest.json": "3e106e06c7de12f38f3ed17fff235a0e1c6785d6e55e7bfd74fc37359deeef72",
         "main.js": "d8606e37a3714d3224df8397e077eae86a61101d21bae1c37d9587906aa8fe6e"
+      }
+    },
+    {
+      "id": "xnxx",
+      "name": "XNXX",
+      "version": "1.0.0",
+      "description": "XNXX：热门 / 本月最佳 / 标签 / 分类 + 搜索，HLS 最高 1080p。与 XVIDEOS 同门，1.0.0 按真实页面核对列表、详情与播放源。",
+      "api": 1,
+      "adult": true,
+      "repo": "1021419217/xg-modules",
+      "tag": "v1.0.6",
+      "path": "modules/xnxx",
+      "sha256": {
+        "manifest.json": "26b49a09644e0b793f71e9dcb69a734d43fce01c7970ccb15d6eeeecdb8d8398",
+        "main.js": "83258f55d3648d03a1bc3ea9a937525c003cfc320976728496ec0433facc5bf4"
       }
     },
     {
@@ -534,7 +549,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/xvideos2",
       "sha256": {
         "manifest.json": "32eb7231adaea5d0c7769ab4fbb04fbc0a864af96d83f127faea16fd21227330",
@@ -549,7 +564,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/yeguo",
       "sha256": {
         "manifest.json": "fccfda9ddd69c70c3fd339e9f02be77a6b62737324b9f94460ff409c6d29755e",
@@ -564,7 +579,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.0",
+      "tag": "v1.0.6",
       "path": "modules/yesheai",
       "sha256": {
         "manifest.json": "79a239ccf55f3e4443da9023551bb0a883932ecbdc2e3b9faf247565db47715d",

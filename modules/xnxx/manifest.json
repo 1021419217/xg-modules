@@ -1,0 +1,21 @@
+{
+  "id": "xnxx",
+  "name": "XNXX",
+  "version": "1.0.0",
+  "description": "XNXX：热门 / 本月最佳 / 标签 / 分类 + 搜索，HLS 最高 1080p。与 XVIDEOS 同门，1.0.0 按真实页面核对列表、详情与播放源。",
+  "runtime": "js",
+  "api": 1,
+  "adult": true,
+  "hosts": [
+    "xnxx.com",
+    "www.xnxx.com",
+    "*.xnxx.com",
+    "*.xnxx-cdn.com",
+    "*.gcore.xnxx-cdn.com"
+  ],
+  "capabilities": [
+    "search"
+  ],
+  "allowEmptyCatalog": false,
+  "baseUrl": "https://www.xnxx.com"
+}
