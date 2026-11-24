@@ -6,6 +6,8 @@
 //         但 token 的 expires 只有约 30 秒，必须现取现用，不能缓存。
 
 const SITE = 'https://www.javrate.com';
+const HOST = 'javrate.com';
+const HOST_ALT = 'www.javrate.com';
 const UA =
   'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1';
 const PAGE_TTL = 10 * 60 * 1000;
@@ -37,19 +39,37 @@ function decodeEntities(value) {
     .trim();
 }
 
+// Cloudflare：清单声明 browserFingerprint，App 用浏览器指纹请求；
+// 用户过完人机验证后，host.challengeUA / challengeCookie 给出凭据，必须成对使用。
+function agent() {
+  return host.challengeUA(HOST) || host.challengeUA(HOST_ALT) || UA;
+}
+
+function cookieHeader() {
+  return host.challengeCookie(HOST) || host.challengeCookie(HOST_ALT) || '';
+}
+
+function looksLikeChallenge(text) {
+  const head = String(text || '').slice(0, 6000);
+  return /_cf_chl_opt|cf-chl-|just a moment|attention required|checking your browser|verify you are human|请稍候|請稍候/i.test(head);
+}
+
 function get(path, referer) {
   const url = path.indexOf('http') === 0 ? path : SITE + path;
+  const headers = {
+    'User-Agent': agent(),
+    Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+    Referer: referer || SITE + '/',
+  };
+  const cookie = cookieHeader();
+  if (cookie) headers.Cookie = cookie;
   let response = null;
   try {
     response = host.fetch({
       method: 'GET',
       url: url,
-      headers: {
-        'User-Agent': UA,
-        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
-        Referer: referer || SITE + '/',
-      },
+      headers: headers,
       anyStatus: true,
       followRedirects: true,
       timeoutMs: 20000,
@@ -58,10 +78,16 @@ function get(path, referer) {
     throw new Error('Javrate 连接失败：' + String((error && error.message) || error));
   }
   const status = response.status || 0;
+  const body = response.body || '';
+  // 站点在 Cloudflare 后面：403/503 且页面是挑战页时，告诉用户去验证，
+  // 验证通过后 challengeCookie 会带 cf_clearance，再次请求即可放行。
+  if (looksLikeChallenge(body)) {
+    throw new Error('Javrate 需要人机验证，请在模块页点「去验证」完成后再试');
+  }
   if (status < 200 || status >= 300) {
     throw new Error('Javrate 返回 HTTP ' + status + '（' + path + '）');
   }
-  return { text: response.body || '', url: response.url || url };
+  return { text: body, url: response.url || url };
 }
 
 function listPath(category, page) {
