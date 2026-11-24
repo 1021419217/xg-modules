@@ -1,7 +1,7 @@
 {
   "id": "kanliao",
   "name": "今日看料",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "吃瓜短视频 · 分类 · 搜索 · 上传者二级页",
   "runtime": "js",
   "api": 1,

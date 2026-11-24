@@ -490,6 +490,25 @@ function detailOf(html, key) {
   const titleM = html.match(/property="og:title"[^>]+content="([^"]*)"/);
   const coverM = html.match(/property="og:image"[^>]+content="([^"]+)"/);
   const durM = html.match(/"video_duration"\s*:\s*"?(\d+)/);
+  // 站点把元数据写成 JS 对象（单引号 + 空格），日期形如 '20261102'
+  const dateM = html.match(/'video_date_published'\s*:\s*'(\d{8})'/) ||
+    html.match(/"video_date_published"\s*:\s*"(\d{8})"/);
+  const published = dateM ? dateM[1] : '';
+  const onlineDate = published.length === 8
+    ? published.slice(0, 4) + '-' + published.slice(4, 6) + '-' + published.slice(6, 8)
+    : '';
+  // 当前视频的女优：只取视频信息区（pornstarsWrapper）里的链接，
+  // 页面底部的推荐列表也会出现大量 /pornstar/ 链接，不能整页扫。
+  const actors = [];
+  const wrapper = html.match(/id="pornstarsWrapper"([\s\S]{0,4000}?)<\/div>\s*<\/div>/);
+  if (wrapper) {
+    const re2 = /<a[^>]+href="\/pornstar\/([^"\/]+)"[^>]*>([\s\S]{0,80}?)<\/a>/g;
+    let m2 = null;
+    while ((m2 = re2.exec(wrapper[1])) !== null) {
+      const name = clean(m2[2]) || m2[1].replace(/-/g, ' ');
+      if (name && actors.indexOf(name) < 0 && actors.length < 8) actors.push(name);
+    }
+  }
   // 详情页 mediaDefinitions 里有真实档位，取最高的一档作为展示分辨率
   let height = 0;
   for (const src of hlsSources(html)) if (src.height > height) height = src.height;
@@ -497,7 +516,9 @@ function detailOf(html, key) {
     title: titleM ? clean(titleM[1]) : '',
     cover: coverM ? coverM[1].replace(/&amp;/g, '&') : '',
     durationMs: durM ? Number(durM[1]) * 1000 : 0,
-    height: height
+    height: height,
+    onlineDate: onlineDate,
+    actors: actors
   };
 }
 
@@ -611,6 +632,10 @@ module.exports = {
 
     let durationMs = 0;
     let desc = '';
+    let durationText = '';
+    let badge = '';
+    let onlineDate = '';
+    let actors = [];
     let author = null;
     if (html) {
       author = parseAuthor(html, code);
@@ -619,11 +644,10 @@ module.exports = {
       if (!title) title = info.title;
       if (!cover) cover = info.cover;
       durationMs = info.durationMs;
-      const bits = [];
-      if (info.height) bits.push(info.height + 'p');
-      const clock = clockText(Math.round(durationMs / 1000));
-      if (clock) bits.push(clock);
-      desc = bits.join(' · ');
+      durationText = clockText(Math.round(durationMs / 1000));
+      if (info.height) badge = info.height + 'p';
+      onlineDate = info.onlineDate || '';
+      actors = info.actors || [];
       try { host.cacheSet('card:' + code, JSON.stringify({ title: title, cover: cover }), 30 * 60 * 1000); } catch (e) { /* 忽略 */ }
 
       // 详情页只缓存「播放地址清单」（几百字节），不在这里抓列表：
@@ -650,6 +674,10 @@ module.exports = {
       cover: cover,
       totalEpisode: 1
     };
+    if (durationText) drama.durationText = durationText;
+    if (badge) drama.badge = badge;
+    if (onlineDate) drama.onlineDate = onlineDate;
+    if (actors.length) drama.actors = actors;
     if (author) {
       drama.author = author.author;
       if (author.authorId) drama.authorId = author.authorId;

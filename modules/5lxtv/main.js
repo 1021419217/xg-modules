@@ -276,12 +276,17 @@ module.exports = {
       channelName: '5L',
       categoryName: '视频',
       onlineDate: releaseDate(releaseMatch ? releaseMatch[1] : ''),
-      duration: durationMatch ? durationMatch[1] : '',
+      durationText: durationMatch ? durationMatch[1] : '',
       totalEpisode: 1,
       episodeCount: 1,
       tags,
       serial: codeOf(title),
     };
+    // 详情页已经解析出演员，之前漏了没往 drama 上挂
+    if (actors.length) {
+      drama.actors = actors;
+      drama.maker = actors[0];
+    }
     if (actors.length > 0) {
       drama.actors = actors.map((entry) => entry.name);
       if (first) {

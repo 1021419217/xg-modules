@@ -393,6 +393,10 @@ function detail(sourceId) {
     if (tags.indexOf(names[i]) < 0) tags.push(names[i]);
   }
 
+  // 与 cg91 同模板：站点没有片商字段，发布方（publisher）作 maker
+  const publisher = html.match(/"publisher"\s*:\s*\{[^}]*?"name"\s*:\s*"([^"]{2,40})"/);
+  const maker = publisher ? truncate(decodeHtml(publisher[1]), 32) : '';
+
   const date = html.match(/<meta itemprop="datePublished" content="([^"]+)"/);
   const onlineDate = releaseDate(date ? decodeHtml(date[1]) : '');
 
@@ -432,6 +436,7 @@ function detail(sourceId) {
     totalEpisode: chapters.length,
     episodeCount: chapters.length,
   };
+  if (maker) drama.maker = maker;
   return { drama, chapters };
 }
 
