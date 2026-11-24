@@ -367,7 +367,8 @@ function dramaOf(chunk, chunkId, base) {
     tags: [],
     totalEpisode: 1,
     episodeCount: 1,
-    duration: durationOf(chunk),
+    // 卡片右下角的时长角标；字段名必须是 durationText，写成 duration 界面不显示
+    durationText: durationOf(chunk),
     // views 在 App 的 Drama 结构体里是 string，传数字会报
     // json: cannot unmarshal number into ... jsDramaPage.items.views of type string
     views: viewsOf(chunk) > 0 ? String(viewsOf(chunk)) : '',

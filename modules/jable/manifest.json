@@ -1,7 +1,7 @@
 {
   "id": "jable",
   "name": "Jable",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Jable - JAV streaming, direct HLS",
   "runtime": "js",
   "api": 1,
