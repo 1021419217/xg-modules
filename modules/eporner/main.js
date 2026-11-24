@@ -81,6 +81,8 @@ function parseApi(body) {
       title: title,
       cover: String(thumb).replace(/&amp;/g, '&'),
       duration: clockText(v.length_sec),
+      // API 直接给了 added（2026-11-23 10:40:49）和 length_min（28:25）
+      onlineDate: String(v.added || '').slice(0, 10),
       views: Number(v.views || 0),
       tags: String(v.keywords || '').split(',').map(clean).filter(Boolean).slice(0, 6)
     });
@@ -90,10 +92,10 @@ function parseApi(body) {
 
 function toDrama(item) {
   const title = item.title || item.sourceId;
+  // 时长走 durationText，desc 只放观看数（原来把时长拼进 desc，界面不显示）
   const bits = [];
-  if (item.duration) bits.push('時長 ' + item.duration);
   if (item.views) bits.push(item.views >= 10000 ? Math.round(item.views / 10000) + '萬次觀看' : item.views + '次觀看');
-  return {
+  const drama = {
     id: host.dramaId(item.sourceId),
     source: host.source,
     sourceId: item.sourceId,
@@ -103,8 +105,13 @@ function toDrama(item) {
     intro: '',
     cover: item.cover || '',
     tags: item.tags || [],
+    durationText: item.duration || '',
     totalEpisode: 1
   };
+  if (item.onlineDate && /^\d{4}-\d{2}-\d{2}$/.test(item.onlineDate)) {
+    drama.onlineDate = item.onlineDate;
+  }
+  return drama;
 }
 
 function apiPath(query, order, page) {

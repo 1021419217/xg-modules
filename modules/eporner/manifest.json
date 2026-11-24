@@ -1,7 +1,7 @@
 {
   "id": "eporner",
   "name": "EPORNER",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "EPORNER：最新 / 最佳 / 评分 / 最多观看 + 分类 + 搜索，官方 JSON 接口，HLS（最高 1080p）。界面英文。",
   "runtime": "js",
   "api": 1,
@@ -10,7 +10,9 @@
     "eporner.com",
     "*.eporner.com"
   ],
-  "capabilities": ["search"],
+  "capabilities": [
+    "search"
+  ],
   "allowEmptyCatalog": false,
   "baseUrl": "https://www.eporner.com"
 }

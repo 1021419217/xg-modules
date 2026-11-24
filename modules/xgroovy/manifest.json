@@ -1,7 +1,7 @@
 {
   "id": "xgroovy",
   "name": "XGroovy",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "XGroovy：最新、分类、搜索、模特/频道信息与多清晰度 MP4 播放。",
   "runtime": "js",
   "api": 1,

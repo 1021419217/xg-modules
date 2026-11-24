@@ -471,6 +471,11 @@ function parseCards(document, pageUrl, categoryName) {
     if (htmlFirstClass(card, "video-item-tag-is-vip", "vip-tag") !== null) {
       drama.vip = true;
     }
+    // 卡片右下角的时长角标：<span class="video-item-tag-duration">01:57:40</span>
+    const durationText = htmlText(htmlFirstClass(card, "video-item-tag-duration", "duration"));
+    if (durationText !== "" && /^\d{1,2}:\d{2}(:\d{2})?$/.test(durationText)) {
+      drama.durationText = durationText;
+    }
     items.push(drama);
     if (items.length > 500) {
       throw new Error("帝果目录条目过多");

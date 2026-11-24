@@ -66,6 +66,8 @@ function parseCards(html) {
   for (const block of blocks) {
     const href = (block.match(/<a[^>]+href="([^"]*\/videos\/[^"]+)"/i) || [])[1] || '';
     const video = href.match(VIDEO_RE);
+    // 卡片左上角的清晰度角标：<span class="is-hd hd1080">1080p</span>
+    const hd = block.match(/class="[^"]*\bis-hd\b[^"]*"[^>]*>([^<]{1,8})</i);
     if (!video) continue;
     const sourceId = video[1] + '/' + video[2];
     if (seen[sourceId]) continue;
@@ -77,7 +79,7 @@ function parseCards(html) {
     const titleMatch = block.match(/<strong[^>]*class="[^"]*title[^"]*"[^>]*>([\s\S]*?)<\/strong>/i);
     const title = clean(titleMatch ? titleMatch[1] : attr(image ? image[0] : '', 'alt'));
     const duration = clean((block.match(/<div[^>]*class="[^"]*duration[^"]*"[^>]*>([\s\S]*?)<\/div>/i) || [])[1]);
-    items.push({
+    const drama = {
       id: host.dramaId(sourceId),
       source: host.source,
       sourceId,
@@ -85,11 +87,13 @@ function parseCards(html) {
       name: title,
       cover,
       coverUrl: cover,
-      duration,
+      durationText: duration,
       totalEpisode: 1,
       episodeCount: 1,
       categoryName: '视频'
-    });
+    };
+    if (hd) drama.badge = clean(hd[1]);
+    items.push(drama);
   }
   return items;
 }

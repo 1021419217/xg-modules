@@ -72,7 +72,9 @@ function parseCards(html) {
       : '';
     const details = clean((block.match(/video-card__details[^>]*>([\s\S]*?)<\/span>/i) || [])[1]);
     const duration = (details.match(/\d{1,2}:\d{2}:\d{2}/) || [])[0] || '';
-    items.push({
+    // 同一个 span 里 <strong>FHD</strong>02:16:24，粗体部分是清晰度
+    const quality = clean((block.match(/video-card__details[^>]*>\s*<strong[^>]*>([\s\S]{0,12}?)<\/strong>/i) || [])[1]);
+    const drama = {
       id: host.dramaId(sourceId),
       source: host.source,
       sourceId,
@@ -80,11 +82,13 @@ function parseCards(html) {
       name: title,
       cover,
       coverUrl: cover,
-      duration,
+      durationText: duration,
       totalEpisode: 1,
       episodeCount: 1,
       categoryName: '视频'
-    });
+    };
+    if (quality) drama.badge = quality;
+    items.push(drama);
   }
   return items;
 }
