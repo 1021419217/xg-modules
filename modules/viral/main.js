@@ -74,11 +74,16 @@ function parseCards(html) {
     const chunk = html.substring(m.index, m.index + 1200);
     const img = chunk.match(/<img[^>]+src="(https?:\/\/[^"]+\.(?:jpg|jpeg|png|webp))"/i);
     const alt = chunk.match(/<img[^>]+alt="([^"]*)"/i) || chunk.match(/title="([^"]*)"/i);
+    // 卡片上的时长与清晰度：<div class="vx-duration">2:25:55</div>
+    //                    <span class="vx-sticky is-2k">1080p</span>
+    const dur = chunk.match(/class="vx-duration"[^>]*>([^<]{2,12})</i);
+    const hd = chunk.match(/class="vx-sticky[^"]*"[^>]*>([^<]{1,10})</i);
     out.push({
       sourceId: id,
       title: alt ? clean(alt[1]) : m[2].replace(/-/g, ' '),
       cover: img ? shrinkCover(img[1]) : '',
-      duration: ''
+      duration: dur ? clean(dur[1]) : '',
+      badge: hd ? clean(hd[1]) : ''
     });
   }
   return out;
@@ -93,7 +98,7 @@ function listPath(category, page) {
 
 function toDrama(item) {
   const title = item.title || item.sourceId;
-  return {
+  const drama = {
     id: host.dramaId(item.sourceId),
     source: host.source,
     sourceId: item.sourceId,
@@ -104,6 +109,10 @@ function toDrama(item) {
     cover: item.cover || '',
     totalEpisode: 1
   };
+  if (item.duration) drama.durationText = item.duration;
+  if (item.badge) drama.badge = item.badge;
+  if (item.tags && item.tags.length) drama.tags = item.tags;
+  return drama;
 }
 
 function detailKey(sourceId) {
