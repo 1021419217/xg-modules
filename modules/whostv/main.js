@@ -162,8 +162,12 @@ function detail(sourceId) {
   const cover =
     (/<meta[^>]*property="og:image"[^>]*content="([^"]*)"/.exec(page.text) || [])[1] || '';
 
-  return {
-    drama: {
+  // 详情页信息区：「时长：</span><span>153 分钟</span>」；片商/发行日期/标签
+  // 该站多数为空占位（显示 --），只有时长稳定有值。
+  const minutes = /时长：<\/span>\s*<span>\s*(\d{1,4})\s*分钟/.exec(page.text);
+  const durationText = minutes ? minutes[1] + ' 分钟' : '';
+
+  const drama = {
       id: host.dramaId(code),
       source: host.source,
       sourceId: code,
@@ -175,7 +179,11 @@ function detail(sourceId) {
       totalEpisode: 1,
       episodeCount: 1,
       serial: code.toUpperCase(),
-    },
+  };
+  if (durationText !== '') drama.durationText = durationText;
+
+  return {
+    drama: drama,
     chapters: [
       {
         id: host.chapterId(code, '1'),
