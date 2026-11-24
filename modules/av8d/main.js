@@ -189,6 +189,21 @@ function detail(sourceId) {
   if (maker !== '') facts.push('片商 ' + maker);
   if (actors.length > 0) facts.push('演員 ' + actors.join(' / '));
 
+  // 演员在站点上有独立的作品集页（/actor/{名字}），可以点进作者二级页，
+  // 所以 author 三件套按第一个演员填，不再是空串。
+  const lead = meta && Array.isArray(meta.actor)
+    ? meta.actor.filter(function (p) {
+        return p && p.name && p.url;
+      })[0]
+    : null;
+  const leadName = lead ? clean(lead.name) : '';
+  const leadUrl = lead ? String(lead.url) : '';
+  const leadId = leadName !== '' ? leadName : '';
+  // 详情页顶部的时长角标 <span class="label">03:21:23</span>
+  const durLabel = page.text.match(/<span class="label"[^>]*>([\d:]{4,12})<\/span>/);
+  const published = meta && meta.uploadDate ? String(meta.uploadDate) : '';
+  const onlineDate = /^\d{4}-\d{2}-\d{2}/.test(published) ? published.slice(0, 10) : '';
+
   return {
     drama: {
       id: host.dramaId(code),
@@ -202,10 +217,12 @@ function detail(sourceId) {
       tags: tags,
       totalEpisode: 1,
       episodeCount: 1,
-      // 站点只给部分演员建了作品页，片商也没有可点页面，作者信息一律留空
-      author: '',
-      authorId: '',
-      authorUrl: '',
+      durationText: durLabel ? durLabel[1] : '',
+      maker: maker,
+      onlineDate: onlineDate,
+      author: leadName,
+      authorId: leadId,
+      authorUrl: leadUrl,
       actors: actors,
       serial: code,
     },
@@ -265,7 +282,26 @@ function resolveMedia(task) {
   }
 }
 
+// App 点「作者」时调用：演员作品集页 /actor/{名字}，支持 ?page=N
+function authorPage(authorId, authorName, page) {
+  const name = clean(authorName || '') || clean(authorId || '');
+  if (name === '') return { items: [], hasMore: false };
+  const n = Number(page || 1) < 1 ? 1 : Number(page || 1);
+  let path = '/actor/' + encodeURIComponent(name);
+  if (n > 1) path += '?page=' + n;
+  let body = '';
+  try {
+    body = get(path).text;
+  } catch (error) {
+    return { items: [], hasMore: false, warning: '作者页打不开：' + String((error && error.message) || error) };
+  }
+  const items = parseCards(body);
+  return { items: items, hasMore: items.length >= 20 };
+}
+
 module.exports = {
+  author: authorPage,
+
   validCategory(category) {
     return (
       !category ||
