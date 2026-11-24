@@ -444,6 +444,16 @@ module.exports = {
       const allAuthors = xcJsonAuthors(html).filter(function (a) { return xcNameOk(a.author); });
       const meta = xcMeta(html, author, allAuthors);
       for (const mk in meta) drama[mk] = meta[mk];
+      // 信息表用的是中文 key（时长/发行/系列），App 只认这些字段名，
+      // 不映射过去界面就不显示——之前数据全抓到却看不到，就是这里断的。
+      if (meta['时长']) drama.durationText = meta['时长'];
+      if (meta['发行']) drama.onlineDate = meta['发行'];
+      if (meta['系列']) drama.maker = meta['系列'];
+      // 演员数组：只有一个模特时 xcMeta 不会填「演员」，这里统一取全部
+      const actorNames = (allAuthors || [])
+        .map(function (a) { return a.author; })
+        .filter(function (n) { return n; });
+      if (actorNames.length) drama.actors = actorNames;
       if (author) {
         host.log('xChina作者 v1.3.0: ' + author.author + (author.authorId ? ' (model ' + author.authorId + ')' : ' (无 model 链接)'));
       } else {
