@@ -119,6 +119,12 @@ function fetchPage(path, referer) {
   if (status === 403 || status === 429 || status === 503 || looksLikeChallenge(body)) {
     throw new Error('SpankBang 需要人机验证，请在站源页里点「去验证」后再试');
   }
+  // 404 是站点明确表示「这个视频不存在」：多为已删除、设为私密，
+  // 或对当前地区不可见。这和模块拼错地址不同——地址只带 ID，
+  // 站点会自动跳转到带标题的正式地址，跳不过去才返回 404。
+  if (status === 404) {
+    throw new Error('这个视频在 SpankBang 上已经看不到了（可能被删除、设为私密，或当前地区不可访问）');
+  }
   if (status < 200 || status >= 300) {
     throw new Error('SpankBang 返回 HTTP ' + status + '（' + path + '）');
   }
