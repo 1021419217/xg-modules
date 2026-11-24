@@ -1,4 +1,8 @@
 // whos.tv（bad.news 的新站）—— 服务端渲染，直接 HTTP 可访问，不需要站点验证。
+//
+// ⚠️ 模块 id 是 whostv，但**真实域名是 whos.tv**。
+//    不存在 whostv.com 这个站（有人拿它去测过，得到空响应后误判"站点已废"）。
+//    改动前请以 manifest.json 的 baseUrl 为准，不要按模块 id 拼域名。
 //   列表  /videos、/videos/page-{n}（每页 12 条），排行榜 /ranking/video
 //   卡片  <a href="/videos/{code}"> … <div data-cover-src="{hex}"> … <h3>标题</h3>
 //   封面  data-cover-src 是「hex(明文逐字节 XOR 密钥) + 2 位十六进制密钥」
