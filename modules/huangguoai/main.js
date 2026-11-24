@@ -112,6 +112,16 @@ function htmlUnescape(text) {
   });
 }
 
+/// 秒数 → 时长文本（193 → 3:13，3725 → 1:02:05）
+function clockText(seconds) {
+  const total = Math.trunc(Number(seconds));
+  if (!Number.isFinite(total) || total <= 0) return "";
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const sec = total % 60;
+  return h > 0 ? h + ":" + pad2(m) + ":" + pad2(sec) : m + ":" + pad2(sec);
+}
+
 function normalizeViews(text) {
   text = text.trim();
   if (text === "") {
@@ -414,6 +424,17 @@ function dramaFromMap(row, pageUrl, category) {
     onlineDate: releaseDate(firstNonEmpty(...dateKeys.map((key) => mapString(row, key)))),
     releaseStatus: status,
   };
+  // 接口里 duration 是秒数（193），之前完全没用上
+  const durationSeconds = firstNonEmpty(
+    mapString(row, "duration"),
+    mapString(row, "duration_sec"),
+    mapString(row, "video_duration"),
+    mapString(row, "length"),
+  );
+  const durationText = clockText(durationSeconds);
+  if (durationText !== "") {
+    drama.durationText = durationText;
+  }
   const tags = mapStringSlice(row, "tags", "tag", "categories", "category");
   if (tags.length > 0) {
     drama.tags = tags;

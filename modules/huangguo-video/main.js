@@ -618,7 +618,10 @@ function parseCards(raw, pageUrl) {
         status = releaseStatusFromRemark(cleanText(meta[1]));
       }
     }
-    items.push({
+    // 封面右下角时长角标：<span class="… cover-pill-text …">7:07</span>
+    const durationMatch = block.match(/cover-pill-text[^"]*"[^>]*>([^<]{1,12})</);
+    const durationText = durationMatch ? cleanText(durationMatch[1]) : "";
+    const item = {
       id: host.dramaId(sourceId),
       source: host.source,
       sourceId,
@@ -632,7 +635,9 @@ function parseCards(raw, pageUrl) {
       channelName: channel,
       remark: firstNonEmpty(classText(block, "bg-black/55"), classText(block, "text-gold-dim")),
       releaseStatus: status,
-    });
+    };
+    if (/^\d{1,2}:\d{2}(:\d{2})?$/.test(durationText)) item.durationText = durationText;
+    items.push(item);
   }
   return items;
 }
