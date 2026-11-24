@@ -167,6 +167,29 @@ function cardCategory(block) {
   return '';
 }
 
+// 卡片角标：<div class="wrap"><span class="wraps">置顶 / 热搜 HOT</span></div>
+function cardBadge(block) {
+  const matched = block.match(/<span class="wraps">([\s\S]{0,24}?)<\/span>/);
+  if (!matched) return '';
+  const text = clean(matched[1]).replace(/HOT/ig, '').trim();
+  return truncate(text, 12);
+}
+
+// 卡片上的全部分类标签
+function cardTags(block) {
+  const info = block.match(/<div class="post-card-info">([\s\S]*?)<\/div>/);
+  if (!info) return [];
+  const out = [];
+  const pattern = /<span([^>]*)>([\s\S]*?)<\/span>/g;
+  let match = null;
+  while ((match = pattern.exec(info[1])) !== null) {
+    if (match[1].indexOf('itemprop') >= 0) continue;
+    const text = clean(match[2]).replace(/[•·]\s*$/, '').trim();
+    if (text !== '' && out.indexOf(text) < 0 && out.length < 8) out.push(truncate(text, 32));
+  }
+  return out;
+}
+
 function hasNextPage(html) {
   const nav = String(html || '').match(/<ol class="page-navigator">([\s\S]*?)<\/ol>/);
   if (!nav) return false;
@@ -210,6 +233,10 @@ function parseCards(html, options) {
       item.authorUrl = settings.authorUrl || SITE + '/author/' + settings.authorId + '/';
       if (settings.authorName) item.author = settings.authorName;
     }
+    const badge = cardBadge(block);
+    if (badge) item.badge = badge;
+    const tags = cardTags(block);
+    if (tags.length) item.tags = tags;
     seen[sourceId] = true;
     items.push(item);
     if (items.length >= CARD_LIMIT) break;

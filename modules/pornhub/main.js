@@ -357,12 +357,11 @@ function parseAuthor(html, key) {
 
 function toDrama(item) {
   const title = item.title || item.sourceId;
-  const bits = [];
-  if (item.duration) bits.push(item.duration);
+  // 时长走 durationText，desc 只放观看数（之前把时长拼进 desc，界面不显示）
+  let views = '';
   if (item.views) {
-    // 站点给的观看数已经带「次观看」，别再拼一次
-    const views = String(item.views).replace(/\s+/g, ' ').trim();
-    bits.push(/次观看|次觀看/.test(views) ? views : views + '次觀看');
+    const text = String(item.views).replace(/\s+/g, ' ').trim();
+    views = /次观看|次觀看/.test(text) ? text : text + '次觀看';
   }
   const drama = {
     id: host.dramaId(item.sourceId),
@@ -370,7 +369,8 @@ function toDrama(item) {
     sourceId: item.sourceId,
     title: title,
     name: title,
-    desc: bits.join(' · '),
+    durationText: item.duration || '',
+    desc: views,
     intro: '',
     cover: item.cover || '',
     totalEpisode: 1

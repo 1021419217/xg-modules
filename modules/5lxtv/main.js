@@ -171,8 +171,7 @@ function parseCards(html) {
       name: truncate(title, 512),
       cover,
       coverUrl: cover,
-      duration,
-      remark: duration || views,
+      durationText: duration,
       onlineDate: releaseDate(dateDiv ? clean(dateDiv[1]) : ''),
       totalEpisode: 1,
       episodeCount: 1,
@@ -180,6 +179,7 @@ function parseCards(html) {
       categoryName: '视频',
       serial: codeOf(title),
     };
+    if (views) item.remark = views;
     items.push(item);
     if (items.length >= 60) {
       break;

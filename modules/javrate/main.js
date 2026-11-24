@@ -185,6 +185,8 @@ function detail(sourceId) {
       totalEpisode: 1,
       episodeCount: 1,
       author: maker,
+      // issuer 就是片商：author 与 maker 都填它，片商名在详情页能显示出来
+      maker: maker,
       authorId: issuer ? issuer[1] : '',
       authorUrl: issuer ? SITE + '/issuer/' + issuer[1] : '',
     },

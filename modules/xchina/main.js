@@ -280,7 +280,8 @@ function toDrama(item) {
     sourceId: item.sourceId,
     title: title,
     name: title,
-    desc: item.duration ? '时长 ' + item.duration : '',
+    durationText: item.duration || '',
+    desc: '',
     intro: '',
     cover: item.cover || '',
     totalEpisode: 1

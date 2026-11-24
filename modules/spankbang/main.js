@@ -289,6 +289,7 @@ function detailMeta(html) {
     authorId: '',
     authorUrl: '',
     actors: [],
+    maker: '',
     tags: [],
     onlineDate: ''
   };
@@ -310,6 +311,8 @@ function detailMeta(html) {
     meta.author = clean(channel[2]) || slugText(slug);
     meta.authorId = path.replace(/^\/+|\/+$/g, '');
     meta.authorUrl = SITE + path;
+    // SpankBang 是频道制站点，频道即片商/厂牌，maker 与上传者同源。
+    meta.maker = meta.author;
   }
 
   // 演员只从这条视频自己的标签块里取：页面别处还有一列全局「热门演员」下拉，
@@ -450,6 +453,7 @@ module.exports = {
     if (meta.authorId) drama.authorId = meta.authorId;
     if (meta.authorUrl) drama.authorUrl = meta.authorUrl;
     if (meta.actors.length) drama.actors = meta.actors.slice();
+    if (meta.maker) drama.maker = meta.maker;
     if (meta.tags.length) drama.tags = meta.tags.slice();
     if (meta.onlineDate) drama.onlineDate = meta.onlineDate;
 

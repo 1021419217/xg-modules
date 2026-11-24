@@ -177,6 +177,29 @@ function cardAuthor(block) {
   };
 }
 
+// 卡片角标：<div class="wrap"><span class="wraps">热搜 HOT</span></div>
+function cardBadge(block) {
+  const matched = block.match(/<span class="wraps">([\s\S]{0,24}?)<\/span>/);
+  if (!matched) return '';
+  const text = clean(matched[1]).replace(/HOT/ig, '').trim();
+  return truncate(text || '热搜', 12);
+}
+
+// 卡片上的全部分类（原来是只取第一个，其余丢了）
+function cardTags(block) {
+  const info = block.match(/<div class="post-card-info">([\s\S]*?)<\/div>/);
+  if (!info) return [];
+  const out = [];
+  const pattern = /<span([^>]*)>([\s\S]*?)<\/span>/g;
+  let match = null;
+  while ((match = pattern.exec(info[1])) !== null) {
+    if (match[1].indexOf('itemprop') >= 0) continue;
+    const text = clean(match[2]).replace(/[•·]\s*$/, '').trim();
+    if (text !== '' && out.indexOf(text) < 0 && out.length < 8) out.push(truncate(text, 32));
+  }
+  return out;
+}
+
 function cardCategory(block) {
   const info = block.match(/<div class="post-card-info">([\s\S]*?)<\/div>/);
   if (!info) return '';
@@ -228,6 +251,10 @@ function parseCards(html, options) {
       episodeCount: 1,
     };
     if (item.authorId !== '') item.authorUrl = SITE + '/author/' + item.authorId + '/';
+    const badge = cardBadge(block);
+    if (badge) item.badge = badge;
+    const tags = cardTags(block);
+    if (tags.length) item.tags = tags;
     seen[sourceId] = true;
     items.push(item);
     if (items.length >= CARD_LIMIT) break;
@@ -384,6 +411,11 @@ function parsePost(html, id) {
     if (tags.indexOf(names[i]) < 0) tags.push(names[i]);
   }
 
+  // 吃瓜站没有「片商」字段，发布方（publisher）是唯一的来源标识，映射到 maker。
+  // 女优（actors）这类站点也不提供，留空不臆造。
+  const publisher = html.match(/"publisher"\s*:\s*\{[^}]*?"name"\s*:\s*"([^"]{2,40})"/);
+  const maker = publisher ? truncate(decodeHtml(publisher[1]), 32) : '';
+
   const date = html.match(/<meta itemprop="datePublished" content="([^"]+)"/);
   const onlineDate = releaseDate(date ? decodeHtml(date[1]) : '');
   const intro = parseIntro(html);
@@ -425,6 +457,7 @@ function parsePost(html, id) {
     totalEpisode: chapters.length,
     episodeCount: chapters.length,
   };
+  if (maker) drama.maker = maker;
   return { drama, chapters };
 }
 

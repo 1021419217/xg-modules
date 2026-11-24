@@ -89,11 +89,18 @@ function parseCards(html) {
 
     const img = seg.match(/<img[^>]+src="([^"]+)"/);
     const dur = seg.match(/class="duration"[^>]*>([^<]+)</);
+    // 清晰度角标：<div class="hd-text-icon">HD</div>
+    const hd = seg.match(/class="hd-text-icon"[^>]*>([^<]{1,12})</);
+    // 原创标记：<div class="original-text-icon">91</div>，站点上表示 UP 自摄
+    const tags = [];
+    if (/class="original-text-icon"/.test(seg)) tags.push('原创');
     out.push({
       sourceId: key,
       title: title,
       cover: img ? img[1] : '',
-      duration: dur ? clean(dur[1]) : ''
+      durationText: dur ? clean(dur[1]) : '',
+      badge: hd ? clean(hd[1]) : '',
+      tags: tags
     });
   }
   return out;
@@ -561,18 +568,21 @@ function parseLooseCards(html) {
 
 function toDrama(item) {
   const title = item.title || item.sourceId;
-  return {
+  const drama = {
     id: host.dramaId(item.sourceId),
     source: host.source,
     sourceId: item.sourceId,
     title: title,
     name: title,
-    durationText: item.duration || '',
-    desc: item.duration ? '时长 ' + item.duration : '',
+    durationText: item.durationText || item.duration || '',
+    desc: '',
     intro: '',
     cover: item.cover || '',
     totalEpisode: 1
   };
+  if (item.badge) drama.badge = item.badge;
+  if (item.tags && item.tags.length) drama.tags = item.tags;
+  return drama;
 }
 
 module.exports = {
