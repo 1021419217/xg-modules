@@ -20,16 +20,19 @@
 // 都返回首页那批视频，分类和详情也一样。所以这里放域名池，谁能用就用谁。
 let SITE = 'https://222.ajmck.cc';
 const MIRRORS = [
-  // 2026-11 实测：222.ajmck.cc 已失效（详情页一律 301 跳首页根路径），
-  // 能用的是 111.ajsck.cc（注意是 ajsck 不是 ajmck），放最前面。
+  // 2026-11 实测结论：
+  //   huangsecangku.net  —— 纯拼音域名，站方长期保留，最稳定，放第一
+  //   111.ajsck.cc       —— 可用（注意是 ajsck，不是 ajmck，差一个字母就完全不是这个站）
+  //   222.9990hsck.cc    —— 可用；数字前缀那批是轮换镜像
+  //   其余数字域名多数已失效（详情页 301 跳首页）或变成广告站，只做兜底
+  'https://huangsecangku.net',
   'https://111.ajsck.cc',
-  'https://333.9983hsck.cc',
-  'https://444.9930hsck.cc',
-  'https://hsccck.cc',
-  'https://111.ajlck.cc',
+  'https://222.9990hsck.cc',
   'https://222.9981hsck.cc',
+  'https://111.ajjck.cc',
   'https://222.ajjck.cc',
-  'https://111.ajjck.cc'
+  'https://hsccck.cc',
+  'https://111.ajlck.cc'
 ];
 let mirrorIndex = 0;
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
@@ -65,7 +68,9 @@ function looksLikeHome(body, path) {
   const t = String(body || '').match(/<title[^>]*>([\s\S]{0,160}?)<\/title>/i);
   if (!t) return false;
   const title = t[1].replace(/\s+/g, '');
-  return /^黄色仓库[-_—]?hsck\.tv$/i.test(title) || /^hsck\.tv[-_—]?黄色仓库$/i.test(title);
+  // 站点标题形如「黄色仓库-hsck.pw」/「黄色仓库-hsck.tv」，后缀会换，
+  // 原来只认 .tv 导致 301 回首页的内容被当成正常页面（标题变成站点名、日期全错）。
+  return /^黄色仓库[-_—]?hsck\./i.test(title) || /^hsck\.[a-z]+[-_—]?黄色仓库$/i.test(title);
 }
 
 function get(path, referer) {
