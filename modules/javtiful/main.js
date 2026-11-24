@@ -143,6 +143,24 @@ module.exports = {
     return result;
   },
 
+  /// App 点「作者」时调用：片商的频道页 /zh/channel/{id}，支持 ?page=N
+  author(authorId, authorName, page) {
+    const id = String(authorId || '').trim();
+    if (!/^[A-Za-z0-9_-]{1,64}$/.test(id)) {
+      return { items: [], hasMore: false, warning: '该片商没有可访问的频道页' };
+    }
+    const p = Number(page || 1) < 1 ? 1 : Number(page || 1);
+    const url = BASE + '/zh/channel/' + id + (p > 1 ? '?page=' + p : '');
+    let html = '';
+    try {
+      html = fetchText(url);
+    } catch (error) {
+      return { items: [], hasMore: false, warning: '频道页打不开：' + String((error && error.message) || error) };
+    }
+    const items = parseCards(html);
+    return { items: items, hasMore: hasNext(html, p) };
+  },
+
   catalogPage(page, category) {
     if (page < 1 || page > 10000) throw new Error('Javtiful 页码无效');
     const html = fetchText(pageUrl(page, category, ''));
