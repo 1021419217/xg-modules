@@ -172,6 +172,40 @@ function signedUrlOf(html) {
   return String(matched[1]).replace(/\\\//g, '/');
 }
 
+/// 详情页的 VideoObject 结构化数据（含 duration/actor/uploadDate）
+function videoObject(html) {
+  const blocks = String(html || '').match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g) || [];
+  for (const block of blocks) {
+    const body = block.replace(/^<script[^>]*>/, '').replace(/<\/script>$/, '');
+    let data = null;
+    try {
+      data = JSON.parse(body);
+    } catch (error) {
+      continue;
+    }
+    if (data && data["@type"] === "VideoObject") return data;
+    if (Array.isArray(data)) {
+      for (const item of data) {
+        if (item && item["@type"] === "VideoObject") return item;
+      }
+    }
+  }
+  return null;
+}
+
+/// ISO8601 时长 PT2H50M6S → 2:50:06
+function isoDurationText(iso) {
+  const m = /^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/.exec(String(iso || ""));
+  if (!m) return "";
+  const h = Number(m[1] || 0);
+  const mi = Number(m[2] || 0);
+  const se = Number(m[3] || 0);
+  const pad = (n) => (n < 10 ? "0" + n : String(n));
+  if (h > 0) return h + ":" + pad(mi) + ":" + pad(se);
+  if (mi > 0) return mi + ":" + pad(se);
+  return se > 0 ? "0:" + pad(se) : "";
+}
+
 function detail(sourceId) {
   const id = String(sourceId || '').trim();
   if (id === '') throw new Error('Javrate 缺少影片 ID');
@@ -197,8 +231,19 @@ function detail(sourceId) {
     if (name !== '' && tags.indexOf(name) < 0 && tags.length < 12) tags.push(name);
   }
 
-  return {
-    drama: {
+  // 结构化数据里的时长、日期、演员（页面上是 JS 渲染，只有 JSON-LD 稳定可取）
+  const vo = videoObject(page.text);
+  const actors = [];
+  if (vo && Array.isArray(vo.actor)) {
+    for (const person of vo.actor) {
+      const name = person && person.name ? String(person.name).trim() : "";
+      if (name !== "" && actors.indexOf(name) < 0 && actors.length < 12) actors.push(name);
+    }
+  }
+  const onlineDate = vo && vo.uploadDate ? String(vo.uploadDate).slice(0, 10) : "";
+  const durationText = vo ? isoDurationText(vo.duration) : "";
+
+  const drama = {
       id: host.dramaId(id),
       source: host.source,
       sourceId: id,
@@ -215,7 +260,13 @@ function detail(sourceId) {
       maker: maker,
       authorId: issuer ? issuer[1] : '',
       authorUrl: issuer ? SITE + '/issuer/' + issuer[1] : '',
-    },
+  };
+  if (actors.length > 0) drama.actors = actors;
+  if (onlineDate !== "") drama.onlineDate = onlineDate;
+  if (durationText !== "") drama.durationText = durationText;
+
+  return {
+    drama: drama,
     chapters: [
       {
         id: host.chapterId(id, '1'),

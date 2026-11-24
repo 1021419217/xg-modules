@@ -1,8 +1,8 @@
 {
   "id": "javrate",
   "name": "Javrate",
-  "version": "1.0.6",
-  "description": "Javrate - 正妹AV / 日本A片 / 國產AV（最新、今日優選、無碼、有碼、中文字幕）。站点在 Cloudflare 后面，首次使用需在 App 内过一次人机验证。",
+  "version": "1.0.7",
+  "description": "Javrate：最新/今日/最多人看/無碼/有碼/中文字幕 + 搜索，播放走 signedUrl。1.0.9：详情页补上结构化数据里的女优（actors）、发行日期、时长。",
   "runtime": "js",
   "api": 1,
   "adult": true,
