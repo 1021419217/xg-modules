@@ -20,7 +20,9 @@
 // 都返回首页那批视频，分类和详情也一样。所以这里放域名池，谁能用就用谁。
 let SITE = 'https://222.ajmck.cc';
 const MIRRORS = [
-  'https://222.ajmck.cc',
+  // 2026-11 实测：222.ajmck.cc 已失效（详情页一律 301 跳首页根路径），
+  // 能用的是 111.ajsck.cc（注意是 ajsck 不是 ajmck），放最前面。
+  'https://111.ajsck.cc',
   'https://333.9983hsck.cc',
   'https://444.9930hsck.cc',
   'https://hsccck.cc',
@@ -454,6 +456,7 @@ module.exports = {
     try { html = get(path); } catch (e) { if (!title) throw e; }
 
     let author = null;
+    let onlineDate = '';
     if (html) {
       author = parseAuthor(html, path);
       if (!author) host.log('黄色仓库 詳情頁未解析到作者: ' + path);
@@ -476,6 +479,9 @@ module.exports = {
                    html.match(/data-original="(https?:\/\/[^"]+vod\.jpg)"/);
         if (og) cover = og[1];
       }
+      // 详情页脚注形如「时间：2026-08-29 04:08:32」，换算成 onlineDate
+      const dateM = html.match(/时间[:：]\s*(\d{4})-(\d{2})-(\d{2})/);
+      if (dateM) onlineDate = dateM[1] + '-' + dateM[2] + '-' + dateM[3];
       try { host.cacheSet('card:' + path, JSON.stringify({ title: title, cover: cover }), 30 * 60 * 1000); } catch (e) { /* 忽略 */ }
 
       // 播放凭证只在详情页出现：缓存起来，点播放时直接用
@@ -506,6 +512,7 @@ module.exports = {
       if (author.authorId) drama.authorId = author.authorId;
       if (author.authorUrl) drama.authorUrl = author.authorUrl;
     }
+    if (onlineDate) drama.onlineDate = onlineDate;
     return {
       drama: drama,
       chapters: [{
