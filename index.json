@@ -9,7 +9,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/5lxtv",
       "sha256": {
         "manifest.json": "b7587b1c68c9602a75bfe6fae4b454c164bc9102c87894b4a283c8fead3d721c",
@@ -24,7 +24,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/av8d",
       "sha256": {
         "manifest.json": "763488c354001f96bd91a56cf0323005c117c963180a6c28f0a1429f2898cf0a",
@@ -39,7 +39,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/avple",
       "sha256": {
         "manifest.json": "735d48acf07bfa12f735eee3033bcf3b2367e99f81b5bb474fdceeaca405304b",
@@ -54,7 +54,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/beabox",
       "sha256": {
         "manifest.json": "a9bad28677eefb7b454647c031694f2fb3d279dbde24a423d081349578d4928a",
@@ -69,11 +69,11 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/cg91",
       "sha256": {
         "manifest.json": "ca4dcdec938dd2287869186b93e7ae9b845da4f65daf608126291c1dd9014e69",
-        "main.js": "776c63cc98f2fd65f9e6ac058eb358e853f174ba8ffbff4a654887ef539080d4"
+        "main.js": "02bb17caa5cb89eb990c5003a22cd69dc88a80325270453fa83ca82d4b1a1851"
       }
     },
     {
@@ -84,7 +84,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/chaoliu",
       "sha256": {
         "manifest.json": "51462211e76b1ecac9fe83cecf2dcb93f4738f96c493703801ff4ac63acc6b6c",
@@ -99,7 +99,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/crdj",
       "sha256": {
         "manifest.json": "6331c40e889f449b62eb31efe447257ae0d4749fe681d0f8d7f763ad6134eda6",
@@ -114,7 +114,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/dsd",
       "sha256": {
         "manifest.json": "20ae6c86a0d72e174eb8004ad32905bdefdec2a323c40a24bf65445221cc6565",
@@ -129,7 +129,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/eporner",
       "sha256": {
         "manifest.json": "79b395b9417e48869ff8ee4f8b6d4f89c82ed5d961f4d5e632d0d6e60fc6273d",
@@ -144,7 +144,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/hanime1",
       "sha256": {
         "manifest.json": "55db1391836a1190e97e434f45eeaab66d98d3b1dccfee5573e0d987e620562f",
@@ -159,7 +159,7 @@
       "api": 1,
       "adult": false,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/hanxiaoquan",
       "sha256": {
         "manifest.json": "0e4df821ae106434135d9697fe6f6bf26e4cc4b0f8f51811250f2ef850bf5d62",
@@ -174,7 +174,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/heitao",
       "sha256": {
         "manifest.json": "a5ea87f19137fdb4d770d249faae97dcda48b4c320ade9b59658b69f680897af",
@@ -189,7 +189,7 @@
       "api": 1,
       "adult": false,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/hongguo",
       "sha256": {
         "manifest.json": "2828dcb8225eaf13fefe9fd8045753a4ff36f6c67b134dd1865bb7b7ff1e74fe",
@@ -204,7 +204,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/hscangku",
       "sha256": {
         "manifest.json": "bfa68579fc8d19a0c8ca6af477594f0434a1a00f7246b7a9f96b634db460f4b1",
@@ -219,7 +219,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/huangguo-video",
       "sha256": {
         "manifest.json": "a08630adbd41b4856b251aa1f5588bbe5d8087147c823c75a70f176d5f8ab2d4",
@@ -234,7 +234,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/huangguoai",
       "sha256": {
         "manifest.json": "7439d054b4672d1dc268bacfc886650e5142531905ff0fadc363e07af67efb61",
@@ -249,7 +249,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/huangju",
       "sha256": {
         "manifest.json": "6a0b6e6a0876be2585a3f165d16b38209794029fa799482e283d7650117c36bf",
@@ -264,7 +264,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/huangtao",
       "sha256": {
         "manifest.json": "9877f270df7bae4ae80dff840faf314fde055a148b146b1f48c8717917902291",
@@ -279,7 +279,7 @@
       "api": 1,
       "adult": false,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/ikanbot",
       "sha256": {
         "manifest.json": "ee4cc7ed52548bbfebaf8bb85871776ce665a645c7dedef1d0c93af01667bdaa",
@@ -294,7 +294,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/jable",
       "sha256": {
         "manifest.json": "f0916414eb8a1215c0feda0bc64b6a253885501045908f6b4998ad39da4d1500",
@@ -309,7 +309,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/javrate",
       "sha256": {
         "manifest.json": "f7b6e3881ddd4d8040193a71047f6fd01abad821a740aa50e0800de30f6dc653",
@@ -324,7 +324,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/javtiful",
       "sha256": {
         "manifest.json": "06cd3244fb86f2d142ee4dc90403afa200158888302edf729944af5dde7a1b28",
@@ -339,11 +339,11 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/kanliao",
       "sha256": {
         "manifest.json": "5013165160dd5b64096c07771a11bbaade9f2e017722af3934ac0a8ceaa9dca3",
-        "main.js": "a0b95d7a82da2be59d21ed7733d8c0c8eceedd48d82a8b8fbc135e91148691a9"
+        "main.js": "c354b4d3f9f545c5d0111c87354a6c7d2f194cf624981641cafcb5b8b1bce23b"
       }
     },
     {
@@ -354,7 +354,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/madou",
       "sha256": {
         "manifest.json": "d8e001d7aa237f7549bed3363d58b4039e307cad64f87b2d19d734881d5efc77",
@@ -369,7 +369,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/missav",
       "sha256": {
         "manifest.json": "4c5df9fcd351a694f8857e0d2fb203012ce0c1f7f309705a7ddf3e4de89b78f2",
@@ -384,7 +384,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/p91",
       "sha256": {
         "manifest.json": "c54d4be2b1dc462f5b00222af8cd6c5996acc0ee8a2967e677195cdb913251d1",
@@ -399,7 +399,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/p91a",
       "sha256": {
         "manifest.json": "f8567f5fa82759ce42932a4682bbadc23bcf85d80bae92c2f7cf601edbe44223",
@@ -414,7 +414,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/p91y",
       "sha256": {
         "manifest.json": "55de5ceeb02efede0ddf203314692556ee4c79d3f688bb61f1e1c0bd8119d8d9",
@@ -429,7 +429,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/pornhub",
       "sha256": {
         "manifest.json": "fea06b747e36d87aae34643b2b978a6e574abd29bb3d826a3b6596642929c426",
@@ -444,7 +444,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/ppp",
       "sha256": {
         "manifest.json": "35441dfbf92014db38156e177c26456bd11252b208e19129b7cfd3fc33d164e6",
@@ -459,7 +459,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/spankbang",
       "sha256": {
         "manifest.json": "c09875fa65f05acb1af479b39301bd6e6e95d548a5c22b1005bd321e793fc6cf",
@@ -474,7 +474,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/viral",
       "sha256": {
         "manifest.json": "3a0d35b09ada8786be48e9a7f6fba449892ae0198a7efdc73d0492dc96a8f96a",
@@ -489,7 +489,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/whostv",
       "sha256": {
         "manifest.json": "8f69ddf8f29cab1ea04e929cb51248328ec574afd5328707c485e5ed4d995f21",
@@ -504,7 +504,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/xchina",
       "sha256": {
         "manifest.json": "4bb258799efe4c6498d75b950a8a06703700ec2ddc07b570e9da15284ea74e86",
@@ -519,7 +519,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/xgroovy",
       "sha256": {
         "manifest.json": "3e106e06c7de12f38f3ed17fff235a0e1c6785d6e55e7bfd74fc37359deeef72",
@@ -534,7 +534,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/xnxx",
       "sha256": {
         "manifest.json": "26b49a09644e0b793f71e9dcb69a734d43fce01c7970ccb15d6eeeecdb8d8398",
@@ -549,7 +549,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/xvideos2",
       "sha256": {
         "manifest.json": "32eb7231adaea5d0c7769ab4fbb04fbc0a864af96d83f127faea16fd21227330",
@@ -564,7 +564,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/yeguo",
       "sha256": {
         "manifest.json": "fccfda9ddd69c70c3fd339e9f02be77a6b62737324b9f94460ff409c6d29755e",
@@ -579,7 +579,7 @@
       "api": 1,
       "adult": true,
       "repo": "1021419217/xg-modules",
-      "tag": "v1.0.7",
+      "tag": "v1.0.8",
       "path": "modules/yesheai",
       "sha256": {
         "manifest.json": "79a239ccf55f3e4443da9023551bb0a883932ecbdc2e3b9faf247565db47715d",

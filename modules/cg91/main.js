@@ -195,7 +195,12 @@ function cardTags(block) {
   while ((match = pattern.exec(info[1])) !== null) {
     if (match[1].indexOf('itemprop') >= 0) continue;
     const text = clean(match[2]).replace(/[•·]\s*$/, '').trim();
-    if (text !== '' && out.indexOf(text) < 0 && out.length < 8) out.push(truncate(text, 32));
+    if (text === '') continue;
+    // 同一行里可能是「今日吃瓜, 自拍偷拍, 最高点击」，拆成独立标签
+    for (const piece of text.split(/[,，、]/)) {
+      const tag = piece.trim();
+      if (tag !== '' && out.indexOf(tag) < 0 && out.length < 8) out.push(truncate(tag, 32));
+    }
   }
   return out;
 }
