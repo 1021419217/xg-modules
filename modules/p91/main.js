@@ -792,7 +792,14 @@ module.exports = {
     // ③ 兜底：缓存没有或地址过期，现拉一次详情页
     const html = get('/view_video.php?viewkey=' + key);
     const urls = decodeSources(html);
-    if (!urls.length) throw new Error('页面里没有找到播放地址（可能需要登录）');
+    if (!urls.length) {
+      // 站点 2026-11 起限制：3 天内的新视频仅登录用户可看，游客拿不到地址。
+      // 老视频（本月最热等）仍然正常，实测 strencode2 / .mp4 都在。
+      if (html.indexOf('仅限登录用户') >= 0) {
+        throw new Error('91porn 新视频仅限登录用户观看，3 天前的视频游客可以直接看');
+      }
+      throw new Error('页面里没有找到播放地址（可能需要登录）');
+    }
 
     //   带 &f=  → HTTP 206 直接返回正片；不带 → 302 跳去提示片
     //   双斜杠 //mp43/ 在代理下会被改写成非法请求，必须修掉
