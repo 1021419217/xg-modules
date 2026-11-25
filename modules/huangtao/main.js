@@ -98,9 +98,17 @@ function categoryParts(category) {
     }
     return null;
   }
-  if (value.indexOf("t:") === 0) {
-    var slug = value.slice(2);
+  // 用 tag: 前缀，和 App 的 topicPrefix 对齐：
+  // App 只要看到有 tag: 分类，就不再自己从剧集里提取「本地分类」。
+  // 以前用 t:，App 没认出来，结果按每部剧的 category 生成了两百多个 Tab。
+  if (value.indexOf("tag:") === 0) {
+    var slug = value.slice(4);
     if (RE_SLUG.test(slug)) return { kind: "tag", value: slug };
+    return null;
+  }
+  if (value.indexOf("t:") === 0) {
+    var legacy = value.slice(2);
+    if (RE_SLUG.test(legacy)) return { kind: "tag", value: legacy };
     return null;
   }
   return null;
@@ -365,7 +373,7 @@ module.exports = {
         var groupName = String(group.name || "").replace(/^\s+|\s+$/g, "");
         if (groupName !== "" && name !== "") name = groupName + " · " + name;
         if (name === "") name = slug;
-        picked.push({ id: "t:" + slug, name: clip(name, 24) });
+        picked.push({ id: "tag:" + slug, name: clip(name, 24) });
         tags++;
       }
     }
