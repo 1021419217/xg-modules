@@ -1,4 +1,6 @@
 // 黄桃（aihuangdou.com）：SSR 列表页 + 同源 JSON 接口，所有 /api/* 走站点 edge 桥。
+// ⚠️ 域名：aihuangdou.com 是**永久域名**（2026-11-25 用户确认），不随镜像轮换，
+//    所以本模块没有备用域名池。若某次打不开，先怀疑本机网络/代理，别急着判站死。
 //
 // 列表：/ai-duanju/、/tag/{slug}/，翻页走路径 /{path}/{n}/，每页 22 部，页脚「第 X/Y 页」。
 // 搜索：edge GET /api/search?q=&page=&size=20 -> data.items + data.pagination.pages
