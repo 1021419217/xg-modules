@@ -115,10 +115,16 @@ function listPath(category, page) {
   return path;
 }
 
+// 91porn 2026-11 起对详情页做了 HTML 混淆（<title>/<h1> 为空，
+// 真实文本拆进 data-xxxxx 属性由 JS 重组）。所以这里经常只能拿到站名或空串，
+// 统一归零，交给 App 用列表页的标题兜底（Drama.merge 里 fresh.title 为空时保留原值）。
+const SITE_TITLES = ['91porn', '91 porn', '91porn.com', '91porn.com - free'];
+
 function detailMeta(html) {
   const t = html.match(/<title[^>]*>([\s\S]*?)<\/title>/);
   let title = t ? clean(t[1]) : '';
   title = title.replace(/\s*-\s*91porn\s*$/i, '').trim();
+  if (SITE_TITLES.indexOf(title.toLowerCase()) >= 0) title = '';
   const poster = html.match(/<video[^>]*poster="([^"]+)"/);
   const dur = html.match(/<span class="duration">([^<]+)<\/span>/);
   return { title: title, poster: poster ? poster[1] : '', duration: dur ? clean(dur[1]) : '' };
@@ -661,7 +667,12 @@ module.exports = {
       }
     } catch (e) { host.log('91porn 取播放地址失败: ' + e.message); }
 
-    const drama = toDrama({ sourceId: key, title: meta.title || key, cover: meta.poster, duration: meta.duration });
+    const drama = toDrama({ sourceId: key, title: meta.title, cover: meta.poster, duration: meta.duration });
+    // 抓不到真标题就别写，让 App 保留列表页显示过的那个
+    if (!meta.title) {
+      delete drama.title;
+      delete drama.name;
+    }
     // 详情页「添加时间: 2026-11-19」→ onlineDate，UI 显示在发行/时间一栏。
     const added = String(html || '').match(/添加时间\s*:?\s*(?:<[^>]*>\s*)*([0-9]{4}-[0-9]{2}-[0-9]{2})/);
     if (added) drama.onlineDate = added[1];
