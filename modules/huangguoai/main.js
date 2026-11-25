@@ -7,10 +7,34 @@ const edgePlayback = "playback";
 const edgeMaxSequence = 16384;
 const edgeMaxLifetime = 600;
 const edgeSessionFailure = "黄果播放会话已失效";
-// 2026-11-25 实测：只有 thu.agdkczeyx.cc 还活着（首页 200 / API 200），
-// 其余 7 个域名全部超时，所以把它排到第一位，避免每次都先等死域名超时。
-const baseMirrors = ["https://thu.agdkczeyx.cc", "https://huangguoai.com", "https://thu.lbvrhyir.cc", "https://pku.xxbgwypx.cc", "https://ttvoij.ediayikma.cc", "https://thu.ediayikma.cc", "https://pku.ediayikma.cc", "https://fdu.ediayikma.cc"];
-const mirrorDomains = ["lbvrhyir.cc", "xxbgwypx.cc", "ediayikma.cc", "agdkczeyx.cc"];
+// 2026-11-25 逐个实测（4 个前缀 thu/pku/fdu/ttvoij × 4 个后缀）：
+//   活的 → agdkczeyx.cc 全活 + lbvrhyir.cc 的 fdu/ttvoij
+//   死的 → xxbgwypx.cc、ediayikma.cc 全部，以及 lbvrhyir.cc 的 thu/pku
+// 上游只静态列了 8 个（还不一定有活的），这里把 16 个组合全列出来、活的排前面，
+// 避免每次先等死域名超时。generatedMirrors 仍作为动态兜底。
+const baseMirrors = [
+  "https://thu.agdkczeyx.cc",
+  "https://ea3.aqkmowihz.cc",
+  "https://pku.agdkczeyx.cc",
+  "https://fdu.agdkczeyx.cc",
+  "https://ttvoij.agdkczeyx.cc",
+  "https://fdu.lbvrhyir.cc",
+  "https://ttvoij.lbvrhyir.cc",
+  "https://huangguoai.com",
+  "https://thu.lbvrhyir.cc",
+  "https://pku.lbvrhyir.cc",
+  "https://thu.xxbgwypx.cc",
+  "https://pku.xxbgwypx.cc",
+  "https://fdu.xxbgwypx.cc",
+  "https://ttvoij.xxbgwypx.cc",
+  "https://thu.ediayikma.cc",
+  "https://pku.ediayikma.cc",
+  "https://fdu.ediayikma.cc",
+  "https://ttvoij.ediayikma.cc",
+];
+// 实测发现还有第 5 个后缀 aqkmowihz.cc（上面 baseMirrors 里没列），
+// 它的 ea3 前缀节点 API 完全可用，一并纳入动态生成。
+const mirrorDomains = ["agdkczeyx.cc", "lbvrhyir.cc", "aqkmowihz.cc", "xxbgwypx.cc", "ediayikma.cc"];
 const categories = [
   { id: "ai-duanju", name: "AI 短剧" },
   { id: "ai-manju", name: "AI 漫剧" },
@@ -512,7 +536,7 @@ function urlCandidates(raw) {
     }
   };
   baseMirrors.forEach((mirror, index) => {
-    if (index === 1) {
+    if (index === 0) {
       for (const generated of generatedMirrors(raw, 8)) {
         add(rehost(raw, generated));
       }
