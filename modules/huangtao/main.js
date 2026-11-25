@@ -18,6 +18,10 @@ var SEARCH_PAGE_SIZE = 20;
 var MAX_PAGE = 500;
 var MAX_EPISODES = 2000;
 
+// 分类栏最多带多少个标签（频道 4 个之外）
+var TAG_LIMIT = 12;
+var TAGS_CACHE_KEY = "tags:v1";
+var TAGS_CACHE_TTL = 10 * 60 * 1000;
 var CHANNELS = [
   { id: "c:ai-duanju", name: "AI 短剧" },
   { id: "c:ai-manju", name: "AI 漫剧" },
@@ -329,28 +333,45 @@ module.exports = {
   validCategory: validCategory,
 
   categories: function () {
-    var data = edge("GET", "/api/tags", null);
+    // 以前把 /api/tags 返回的每一个标签都当成一个分类，上限还给了 96 个，
+    // 结果分类栏里堆出上百个 Tab（用户体感"两百多个"）。
+    // 现在：4 个频道 + 最多 12 个热门标签，够了；而且结果缓存 10 分钟，
+    // 避免每次进站都重新请求一遍 /api/tags。
+    var cached = host.cacheGet(TAGS_CACHE_KEY);
     var categories = CHANNELS.slice();
+    if (cached !== null && cached !== undefined) {
+      try {
+        var saved = typeof cached === "string" ? JSON.parse(cached) : cached;
+        if (saved instanceof Array) {
+          for (var index = 0; index < saved.length; index++) categories.push(saved[index]);
+          return categories;
+        }
+      } catch (error) {
+        /* 缓存坏了重新拉 */
+      }
+    }
+    var data = edge("GET", "/api/tags", null);
     var tags = 0;
+    var picked = [];
     var groups = data && data.categories instanceof Array ? data.categories : [];
-    for (var index = 0; index < groups.length; index++) {
-      var group = groups[index] || {};
+    for (var g = 0; g < groups.length && picked.length < TAG_LIMIT; g++) {
+      var group = groups[g] || {};
       var entries = group.tags instanceof Array ? group.tags : [];
-      for (var inner = 0; inner < entries.length; inner++) {
-        var tag = entries[inner] || {};
+      for (var i = 0; i < entries.length && picked.length < TAG_LIMIT; i++) {
+        var tag = entries[i] || {};
         var slug = String(tag.slug || "").replace(/^\s+|\s+$/g, "");
         if (!RE_SLUG.test(slug)) continue;
         var name = String(tag.name || "").replace(/^\s+|\s+$/g, "");
         var groupName = String(group.name || "").replace(/^\s+|\s+$/g, "");
         if (groupName !== "" && name !== "") name = groupName + " · " + name;
         if (name === "") name = slug;
-        categories.push({ id: "t:" + slug, name: clip(name, 24) });
+        picked.push({ id: "t:" + slug, name: clip(name, 24) });
         tags++;
-        if (categories.length >= 96) break;
       }
-      if (categories.length >= 96) break;
     }
     if (tags === 0 && groups.length === 0) throw new Error("黄桃暂未返回内容分类");
+    host.cacheSet(TAGS_CACHE_KEY, JSON.stringify(picked), TAGS_CACHE_TTL);
+    for (var k = 0; k < picked.length; k++) categories.push(picked[k]);
     return categories;
   },
 
