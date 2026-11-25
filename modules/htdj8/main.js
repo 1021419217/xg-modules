@@ -13,6 +13,8 @@ const UA = "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/6
 const CHANNEL = "黄桃 AI";
 const API = "/api/v1/ai-adult";
 const DEFAULT_CATEGORY = "all";
+// 站点目前只有这 3 个分类（2026-11-25 实测）。新分类出现时改这里即可。
+const KNOWN_CATEGORIES = ["ai-short-modern", "ai-short-costume", "ai-short-anime"];
 
 function isRecord(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
@@ -102,17 +104,25 @@ function request(method, path, body) {
 const FEED_KEY = "feed:v1";
 const FEED_TTL = 10 * 60 * 1000;
 
+// 进程内 memo：同一模块实例只解析一次。
+// 之前没有这层，validCategory 每次调用都会走 feed()，而宿主会对每部剧调一次，
+// 546 部就是 546 次 336KB 请求 —— 表现就是分类栏「一直不停刷新」。
+let feedMemo = null;
+
 function feed() {
+  if (feedMemo !== null) return feedMemo;
   const cached = host.cacheGet(FEED_KEY);
   if (cached !== null && cached !== undefined) {
     try {
-      return typeof cached === "string" ? JSON.parse(cached) : cached;
+      feedMemo = typeof cached === "string" ? JSON.parse(cached) : cached;
+      if (Array.isArray(feedMemo)) return feedMemo;
     } catch (error) {
       /* 缓存坏了就重新拉 */
     }
   }
   const data = request("GET", API + "/short-feed");
   const categories = Array.isArray(data && data.categories) ? data.categories : [];
+  feedMemo = categories;
   host.cacheSet(FEED_KEY, JSON.stringify(categories), FEED_TTL);
   return categories;
 }
@@ -131,10 +141,12 @@ function categories(force) {
   return tabs;
 }
 
+// 分类 code 走静态白名单，绝不能在这里读 feed()：
+// 宿主会拿它校验每一部剧的分类，一旦这里发请求就是几百次重复下载。
 function validCategory(category) {
   const id = text(category, 40);
   if (id === "" || id === DEFAULT_CATEGORY) return true;
-  return feed().some((c) => isRecord(c) && text(c.code, 40) === id);
+  return KNOWN_CATEGORIES.includes(id);
 }
 
 function filmTags(film) {

@@ -1,7 +1,7 @@
 {
   "id": "htdj8",
   "name": "黄桃 AI",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "AI 生成短剧，546 部，按现代/古装/动漫分类",
   "runtime": "js",
   "api": 1,
