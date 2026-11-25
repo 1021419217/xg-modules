@@ -7,7 +7,9 @@ const edgePlayback = "playback";
 const edgeMaxSequence = 16384;
 const edgeMaxLifetime = 600;
 const edgeSessionFailure = "黄果播放会话已失效";
-const baseMirrors = ["https://huangguoai.com", "https://thu.lbvrhyir.cc", "https://pku.xxbgwypx.cc", "https://ttvoij.ediayikma.cc", "https://thu.ediayikma.cc", "https://pku.ediayikma.cc", "https://fdu.ediayikma.cc", "https://thu.agdkczeyx.cc"];
+// 2026-11-25 实测：只有 thu.agdkczeyx.cc 还活着（首页 200 / API 200），
+// 其余 7 个域名全部超时，所以把它排到第一位，避免每次都先等死域名超时。
+const baseMirrors = ["https://thu.agdkczeyx.cc", "https://huangguoai.com", "https://thu.lbvrhyir.cc", "https://pku.xxbgwypx.cc", "https://ttvoij.ediayikma.cc", "https://thu.ediayikma.cc", "https://pku.ediayikma.cc", "https://fdu.ediayikma.cc"];
 const mirrorDomains = ["lbvrhyir.cc", "xxbgwypx.cc", "ediayikma.cc", "agdkczeyx.cc"];
 const categories = [
   { id: "ai-duanju", name: "AI 短剧" },
@@ -540,9 +542,11 @@ function apiReply(text) {
 }
 
 function api(path) {
-  const address = siteBaseUrl + "/api/edge/request";
-  const envelope = goJson({ body: "", content_type: "", method: "GET", path });
-  const response = host.fetchText({ url: address, referer: siteBaseUrl + "/", body: envelope, mirrors: urlCandidates(address) });
+  // 站点已停用 /api/edge/request（POST 转发一律返回 503「接口已停用」），
+  // 但目标路径本身是可以直接访问的（实测 /api/videos/xxx 返回 200），
+  // 所以这里直连，不再包一层转发。
+  const address = siteBaseUrl + path;
+  const response = host.fetchText({ url: address, referer: siteBaseUrl + "/", mirrors: urlCandidates(address) });
   return apiReply(response.body);
 }
 
