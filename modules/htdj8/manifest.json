@@ -1,7 +1,7 @@
 {
   "id": "htdj8",
   "name": "黄桃 AI",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "AI 生成短剧，546 部，按现代/古装/动漫分类",
   "runtime": "js",
   "api": 1,
@@ -11,7 +11,9 @@
     "htdj8.com",
     "dwv7cmb4gwo7o.cloudfront.net"
   ],
-  "capabilities": ["cover"],
+  "capabilities": [
+    "cover"
+  ],
   "group": "huangtao",
   "groupName": "黄桃",
   "entryName": "AI",

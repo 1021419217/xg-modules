@@ -264,7 +264,17 @@ function resolveMedia(task) {
   const data = request("POST", API + "/episodes/" + encodeURIComponent(episodeId) + "/play-auth", "{}");
   const path = isRecord(data) ? text(data.url, 4096) : "";
   if (path === "") {
-    throw new Error("黄桃AI 没有返回播放地址，可能需要解锁该集");
+    throw new Error("黄桃AI 没有返回播放地址，该集可能需要购买");
+  }
+  // 站点对未购买的集只下发试看地址（mode=PREVIEW, preview_end_sec=10），
+  // 播 10 秒就断。这里直接说明，避免看起来像播放器出错。
+  if (text(data.mode, 16) === "PREVIEW") {
+    const seconds = Number(data.preview_end_sec);
+    throw new Error(
+      "黄桃AI 该集需要购买，只能试看" +
+        (Number.isFinite(seconds) && seconds > 0 ? " " + seconds + " 秒" : "") +
+        "。每部剧前 3 集免费",
+    );
   }
   const address = relUrl(path);
   return host.prepareWebMedia(
