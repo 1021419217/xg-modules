@@ -184,12 +184,28 @@ function infoFields(body) {
   const fields = {};
   for (const match of body.matchAll(infoItemPattern)) {
     const label = match[1].trim().replace(/：$/, "").trim();
-    const value = clean(match[2]);
+    const value = clipFieldValue(clean(match[2]));
     if (label !== "" && value !== "" && !fields[label]) {
       fields[label] = value;
     }
   }
   return fields;
+}
+
+/// 字段值可能把后面的内容一起吞进来。
+///
+/// 页面结构是「<span>主演</span><div>原创</div>」，一旦站点改版导致某个 div
+/// 没有正确闭合，(.*?) 就会一路吃到后面很远，最后变成
+/// 「原创 CategoryType 0 ContinueStatus 1 CountBrowse 0 …」这样一整串，
+/// 被当成标签渲染出来就是一堆看不懂的英文。
+/// 这里遇到「大写开头的英文单词 + 值」就截断，只保留前半段真正的内容。
+function clipFieldValue(value) {
+  if (Array.from(value).length <= 40) return value;
+  const cut = value.search(/\s+[A-Z][A-Za-z]{3,}\s+\S/);
+  if (cut > 0) {
+    return value.slice(0, cut).trim();
+  }
+  return truncate(value, 40);
 }
 
 function pickPlaylist(body, sourceId) {

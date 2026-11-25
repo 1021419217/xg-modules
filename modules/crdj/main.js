@@ -374,9 +374,10 @@ module.exports = {
 
     var play = null;
     var chapters = [];
+    var pageHtml = "";
     try {
-      var body = textGet("/duanju/" + encodeURIComponent(id) + "/1/");
-      play = playChapters(body, id);
+      pageHtml = textGet("/duanju/" + encodeURIComponent(id) + "/1/");
+      play = playChapters(pageHtml, id);
       if (play) chapters = play.chapters;
     } catch (error) {}
     if (chapters.length === 0) {
@@ -388,7 +389,14 @@ module.exports = {
 
     var title = clip(clean(meta.title), 512);
     if (title === "" && play && play.data) title = clip(clean(play.data.title), 512);
-    if (title === "") throw new Error("91短剧详情缺少剧集名称");
+    if (title === "" && pageHtml) {
+      // 接口挂了就退回页面 <title>，最后用 id 兜底：
+      // 以前这里直接抛「缺少剧集名称」，整个详情页连带播放全废，
+      // 用户看到的只有「剧集信息暂时不可用」。
+      var pageTitle = /<title>([^<]*)<\/title>/i.exec(pageHtml);
+      if (pageTitle) title = clip(clean(pageTitle[1]).replace(/\s*[-_|–—].*$/, ""), 512);
+    }
+    if (title === "") title = id;
 
     var cover = absUrl(meta.cover);
     if (cover === "" && play && play.data) cover = absUrl(play.data.poster);
