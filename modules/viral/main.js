@@ -190,48 +190,45 @@ module.exports = {
         }
       } catch (_) {}
     }
-    if (videoLd) {
-      var iso = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/.exec(String(videoLd.duration || ''));
-      if (iso) {
-        var pad = function (n) { return n < 10 ? '0' + n : String(n); };
-        var hh = Number(iso[1] || 0), mm = Number(iso[2] || 0), ss = Number(iso[3] || 0);
-        drama.durationText = hh > 0 ? hh + ':' + pad(mm) + ':' + pad(ss) : mm + ':' + pad(ss);
-      }
-      var uploaded = String(videoLd.uploadDate || videoLd.datePublished || '').match(/\d{4}-\d{2}-\d{2}/);
-      if (uploaded) drama.onlineDate = uploaded[0];
-      var ldActors = Array.isArray(videoLd.actor) ? videoLd.actor : [];
-      var actors = [];
-      var authorIds = [];
-      for (var ai = 0; ai < ldActors.length && actors.length < 8; ai++) {
-        var name = clean(ldActors[ai] && ldActors[ai].name);
-        if (!name) continue;
-        // 站点的 JSON-LD 演员名常是短名（Luna），但真实模特页是完整名（Luna Doll）——
-        // 标题尾部「- 模特名」与短名前缀匹配时，用完整名 + 对应 slug，
-        // 否则演员页对不上（用户实测 Luna 索引到错误内容）。
-        var titleTail = /(?:^|[-–—]\s*)([^-–—]{2,40})\s*$/.exec(String(drama.title || ''));
-        if (titleTail) {
-          var tail = titleTail[1].trim();
-          var tailLower = tail.toLowerCase();
-          var nameLower = name.toLowerCase();
-          if (tailLower.indexOf(nameLower) === 0 && tailLower.length > nameLower.length && /^[A-Za-z0-9 .'-]+$/.test(tail)) {
-            name = tail;
-          }
-        }
-        actors.push(name);
-        var slug = /\/models\/([^"\/?#]+)/.exec(String(ldActors[ai].url || ''));
-        var authorId = slug ? slug[1] : '';
-        // 演员名被标题尾名增强时，slug 同步换成完整名的 slug（与站点 models 路由一致：小写、空格转-）
-        if (name !== clean(ldActors[ai] && ldActors[ai].name)) {
-          authorId = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-        }
-        authorIds.push(authorId);
-      }
-      if (actors.length > 0) {
-        drama.actors = actors;
-        drama.author = actors[0];
-        drama.authorId = authorIds[0];
-      }
+  if (videoLd) {
+    var iso = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/.exec(String(videoLd.duration || ''));
+    if (iso) {
+      var pad = function (n) { return n < 10 ? '0' + n : String(n); };
+      var hh = Number(iso[1] || 0), mm = Number(iso[2] || 0), ss = Number(iso[3] || 0);
+      drama.durationText = hh > 0 ? hh + ':' + pad(mm) + ':' + pad(ss) : mm + ':' + pad(ss);
     }
+    var uploaded = String(videoLd.uploadDate || videoLd.datePublished || '').match(/\d{4}-\d{2}-\d{2}/);
+    if (uploaded) drama.onlineDate = uploaded[0];
+    var ldActors = Array.isArray(videoLd.actor) ? videoLd.actor : [];
+    var actors = [];
+    for (var ai = 0; ai < ldActors.length && actors.length < 8; ai++) {
+      var name = clean(ldActors[ai] && ldActors[ai].name);
+      if (name && actors.indexOf(name) < 0) actors.push(name);
+    }
+    if (actors.length > 0) drama.actors = actors;
+  }
+
+  // 作者 = 上传者（member）：详情页信息区 /zh/members/{id}/ + 显示名（vx-name / vx-ava）。
+  // JSON-LD 的 actor 是站方标签（Luna），member 才是用户在网页上看到的上传者
+  // （LunaDoll，/zh/members/182452/，用户实测该页含这条视频）——两者不是一回事。
+  var memberName = '';
+  var memberId = '';
+  var memberLine = /href="[^"]*\/members\/([0-9]+)\/"[^>]*class="vx-name"[^>]*>\s*([^<]{1,60}?)\s*<\/a>/.exec(html);
+  if (memberLine) {
+    memberId = memberLine[1];
+    memberName = clean(memberLine[2]);
+  }
+  if (memberName === '') {
+    var ava = /href="[^"]*\/members\/([0-9]+)\/"[^>]*class="vx-ava"[^>]*aria-label="([^"]*)"/.exec(html);
+    if (ava) {
+      memberId = ava[1];
+      memberName = clean(ava[2].replace(/\s*profile\s*$/i, ''));
+    }
+  }
+  if (memberName !== '' && memberId !== '') {
+    drama.author = memberName;
+    drama.authorId = memberId;
+  }
 
     // 信息区（铁律 4 第 2 级）：<h3 class="vx-name-thumb">标签:</h3> 后面的 vx-list-tags。
     // 注意 a 标签文本两侧缩进空白可达 30+ 字符，跨度不能用 {1,40}，用 [^<] 非标签字符。
@@ -289,6 +286,24 @@ module.exports = {
         referer: page
       }]
     };
+  },
+
+  author(authorId, authorName, page) {
+    // 作者 = 上传者（member 页 /zh/members/{id}/）。该页一次返回全部视频，无分页。
+    const id = String(authorId == null ? '' : authorId).replace(/[^0-9]/g, '');
+    const n = Number(page || 1) < 1 ? 1 : Number(page || 1);
+    if (!id || n > 1) return { items: [], hasMore: false };
+    const html = get(LOC + '/members/' + id + '/');
+    const name = clean(authorName || '');
+    const items = parseCards(html).map(function (it) {
+      const d = toDrama(it);
+      if (name) {
+        d.author = name;
+        d.authorId = id;
+      }
+      return d;
+    });
+    return { items: items, hasMore: false };
   },
 
   resolveMedia(task) {
