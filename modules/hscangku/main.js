@@ -70,7 +70,6 @@ function looksLikeHome(body, path) {
   const t = String(body || '').match(/<title[^>]*>([\s\S]{0,160}?)<\/title>/i);
   if (!t) return false;
   const title = t[1].replace(/\s+/g, '').trim();
-  // 纯站点名：黄色仓库-hsck.pw / hsck.tv黄色仓库，整体匹配、无后缀内容
   return /^黄色仓库[-_—]?hsck\.[a-z]+$/i.test(title) ||
          /^hsck\.[a-z]+[-_—]?黄色仓库$/i.test(title);
 }
