@@ -153,7 +153,7 @@ function fetchPage(path) {
     var status = Number(response.status) || 0;
     // 429 是站点限流（Retry-After 约 5 分钟）：这条线换掉，试下一条。
     if (status === 429 || status >= 500) {
-      lastError = new Error(SITE_NAME + ' 请求过于频繁，正在切换线路');
+      lastError = new Error(SITE_NAME + ' 访问太频繁被站点限流了，请等 5 分钟左右再试');
       lastError.retryable = true;
       continue;
     }
@@ -250,9 +250,19 @@ function listPage(page, category, query) {
     path = found;
   }
   var address = path + (path.indexOf('?') >= 0 ? '&' : '?') + 'page=' + p;
+  // 站点对游客限流很紧，同一页 2 分钟内翻回来直接复用，不再打站点。
+  var cacheKey = 'list:' + (keyword !== '' ? 'q:' + keyword : category || 'home') + ':' + p;
+  try {
+    var memo = host.cacheGet(cacheKey);
+    if (memo) return JSON.parse(String(memo));
+  } catch (_) {}
   var response = fetchPage(address);
   var items = parseCards(response.html, fallbackCategory);
-  return { items: items, hasMore: hasNextPage(response.html, p) };
+  var result = { items: items, hasMore: hasNextPage(response.html, p) };
+  try {
+    host.cacheSet(cacheKey, JSON.stringify(result), 120000);
+  } catch (_) {}
+  return result;
 }
 
 function catalogPage(page, category, query) {
@@ -443,6 +453,11 @@ function sessionAt(id, site) {
 function resolveMedia(task) {
   var id = taskId(task);
   if (id === '') throw new Error(SITE_NAME + ' 缺少视频 ID，请刷新详情');
+  // 重播同一个视频时没必要再打一次试看接口。
+  try {
+    var memoMedia = host.cacheGet('media:' + id);
+    if (memoMedia) return JSON.parse(String(memoMedia));
+  } catch (_) {}
   var sites = orderedSites();
   var lastError = null;
   for (var i = 0; i < sites.length; i++) {
@@ -474,7 +489,7 @@ function resolveMedia(task) {
       });
       var status = Number(response.status) || 0;
       if (status === 429 || status >= 500) {
-        lastError = new Error(SITE_NAME + ' 请求过于频繁（HTTP ' + status + '），正在切换线路');
+        lastError = new Error(SITE_NAME + ' 访问太频繁被站点限流了，请等 5 分钟左右再试');
         lastError.retryable = true;
         continue;
       }
@@ -489,7 +504,7 @@ function resolveMedia(task) {
         try {
           host.cacheSet('site', site, 1800000);
         } catch (_) {}
-        return {
+        var prepared = {
           url: address,
           referer: pageUrl,
           quality: 0,
@@ -500,6 +515,10 @@ function resolveMedia(task) {
             cookie: session.cookie,
           },
         };
+        try {
+          host.cacheSet('media:' + id, JSON.stringify(prepared), 300000);
+        } catch (_) {}
+        return prepared;
       }
       if (status === 422) {
         try {
