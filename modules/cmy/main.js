@@ -363,7 +363,7 @@ function detail(sourceId) {
   var cookie = cookieHeader(response.headers);
   if (token !== '' && cookie !== '') {
     try {
-      host.cacheSet('session:' + id, JSON.stringify({ token: token, cookie: cookie, site: site }), 240000);
+      host.cacheSet('session:' + site + ':' + id, JSON.stringify({ token: token, cookie: cookie, site: site }), 240000);
     } catch (_) {}
   }
 
@@ -394,86 +394,131 @@ function taskId(task) {
   return slugOf(parts.length >= 2 ? parts[1] : raw);
 }
 
-function sessionFor(id) {
-  try {
-    var cached = host.cacheGet('session:' + id);
-    if (cached) {
-      var parsed = JSON.parse(String(cached));
-      if (parsed && parsed.token && parsed.cookie && parsed.site) return parsed;
-    }
-  } catch (_) {}
-  var response = fetchPage('/episode/show/' + id);
-  return { token: csrfToken(response.html), cookie: cookieHeader(response.headers), site: response.site || SITE };
+// 在指定线路上请求页面（不轮换，由调用方决定换线）。
+function fetchAt(site, path) {
+  var response = host.fetch({
+    url: site + path,
+    headers: {
+      Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+      'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+      Referer: site + '/',
+      'User-Agent': UA,
+    },
+    anyStatus: true,
+    followRedirects: true,
+    timeoutMs: 25000,
+  });
+  var status = Number(response.status) || 0;
+  if (status >= 400) {
+    var problem = new Error(SITE_NAME + ' 返回 HTTP ' + status);
+    problem.status = status;
+    problem.retryable = status === 429 || status >= 500 || status === 408;
+    throw problem;
+  }
+  return { html: String(response.body || ''), headers: response.headers || {}, site: site };
 }
 
+// 会话按「线路 + 视频」缓存：两条线路的 session cookie 各自独立。
+function sessionAt(id, site) {
+  var key = 'session:' + site + ':' + id;
+  try {
+    var cached = host.cacheGet(key);
+    if (cached) {
+      var parsed = JSON.parse(String(cached));
+      if (parsed && parsed.token && parsed.cookie) return parsed;
+    }
+  } catch (_) {}
+  var response = fetchAt(site, '/episode/show/' + id);
+  var session = { token: csrfToken(response.html), cookie: cookieHeader(response.headers), site: site };
+  if (session.token !== '' && session.cookie !== '') {
+    try {
+      host.cacheSet(key, JSON.stringify(session), 240000);
+    } catch (_) {}
+  }
+  return session;
+}
+
+// 播放接口逐条线路重试：站点的 429 是按域名算的，主站被限时不能复用
+// 「主站建立的会话」继续打主站，否则永远卡在那 5 分钟冷却里。
 function resolveMedia(task) {
   var id = taskId(task);
   if (id === '') throw new Error(SITE_NAME + ' 缺少视频 ID，请刷新详情');
-  var session = sessionFor(id);
-  var site = session.site || SITE;
-  var pageUrl = site + '/episode/show/' + id;
-  if (!session.token || !session.cookie) {
-    throw new Error(SITE_NAME + ' 会话建立失败，请稍后重试');
-  }
-
-  var response;
-  try {
-    response = host.fetch({
-      method: 'POST',
-      url: site + '/episode/guest_play/' + id,
-      headers: {
-        Accept: 'application/json, text/plain, */*',
-        'Content-Type': 'application/json',
-        'X-CSRF-Token': session.token,
-        'X-Requested-With': 'XMLHttpRequest',
-        Cookie: session.cookie,
-        Origin: site,
-        Referer: pageUrl,
-        'User-Agent': UA,
-      },
-      body: '{}',
-      anyStatus: true,
-      followRedirects: true,
-      timeoutMs: 20000,
-    });
-  } catch (error) {
-    var failure = new Error(SITE_NAME + ' 播放接口连接失败：' + (error && error.message ? error.message : error));
-    failure.retryable = true;
-    throw failure;
-  }
-
-  var payload = {};
-  try {
-    payload = JSON.parse(String(response.body || '{}')) || {};
-  } catch (_) {
-    payload = {};
-  }
-  var address = String(payload.hdSource || payload.av1Source || '');
-  if (address === '') {
-    var status = Number(response.status) || 0;
-    if (status === 422) {
-      // 缓存里的会话可能已过期，清掉让下次重新建立。
+  var sites = orderedSites();
+  var lastError = null;
+  for (var i = 0; i < sites.length; i++) {
+    var site = sites[i];
+    try {
+      var session = sessionAt(id, site);
+      if (!session.token || !session.cookie) {
+        lastError = new Error(SITE_NAME + ' 会话建立失败，请稍后重试');
+        continue;
+      }
+      var pageUrl = site + '/episode/show/' + id;
+      var response = host.fetch({
+        method: 'POST',
+        url: site + '/episode/guest_play/' + id,
+        headers: {
+          Accept: 'application/json, text/plain, */*',
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': session.token,
+          'X-Requested-With': 'XMLHttpRequest',
+          Cookie: session.cookie,
+          Origin: site,
+          Referer: pageUrl,
+          'User-Agent': UA,
+        },
+        body: '{}',
+        anyStatus: true,
+        followRedirects: true,
+        timeoutMs: 20000,
+      });
+      var status = Number(response.status) || 0;
+      if (status === 429 || status >= 500) {
+        lastError = new Error(SITE_NAME + ' 请求过于频繁（HTTP ' + status + '），正在切换线路');
+        lastError.retryable = true;
+        continue;
+      }
+      var payload = {};
       try {
-        host.cacheSet('session:' + id, '', 0);
-      } catch (_) {}
-      var expired = new Error(SITE_NAME + ' 会话已过期，请重新点一次播放');
-      expired.retryable = true;
-      throw expired;
+        payload = JSON.parse(String(response.body || '{}')) || {};
+      } catch (_) {
+        payload = {};
+      }
+      var address = String(payload.hdSource || payload.av1Source || '');
+      if (address !== '') {
+        try {
+          host.cacheSet('site', site, 1800000);
+        } catch (_) {}
+        return {
+          url: address,
+          referer: pageUrl,
+          quality: 0,
+          credentials: {
+            origin: site,
+            referer: pageUrl,
+            userAgent: UA,
+            cookie: session.cookie,
+          },
+        };
+      }
+      if (status === 422) {
+        try {
+          host.cacheSet('session:' + site + ':' + id, '', 0);
+        } catch (_) {}
+        lastError = new Error(SITE_NAME + ' 会话已过期，请重新点一次播放');
+        lastError.retryable = true;
+        continue;
+      }
+      lastError = new Error(SITE_NAME + ' 未返回播放地址（该片可能需要登录或开通 VIP）');
+    } catch (error) {
+      lastError = error;
+      continue;
     }
-    throw new Error(SITE_NAME + ' 未返回播放地址（该片可能需要登录或开通 VIP）');
   }
-
-  return {
-    url: address,
-    referer: pageUrl,
-    quality: 0,
-    credentials: {
-      origin: site,
-      referer: pageUrl,
-      userAgent: UA,
-      cookie: session.cookie,
-    },
-  };
+  if (lastError) throw lastError;
+  var blocked = new Error(SITE_NAME + ' 所有线路都不可用，请稍后重试');
+  blocked.retryable = true;
+  throw blocked;
 }
 
 module.exports = {
