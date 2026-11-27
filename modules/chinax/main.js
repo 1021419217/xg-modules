@@ -10,7 +10,13 @@ const SITE_NAME = '中国X站';
 const UA =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36';
 
-const CATEGORIES = [{ id: 'latest', name: '最新更新', path: '/' }];
+const CATEGORIES = [
+  { id: 'latest', name: '最新更新', path: '/' },
+  { id: 'domestic', name: '国产传媒', path: '/vodtype/domestic-media/' },
+  { id: 'japanese', name: '日本AV', path: '/vodtype/japanese-av/' },
+  { id: 'uncensored', name: '无码视频', path: '/vodtype/uncensored-video/' },
+  { id: 'subtitle', name: '中文字幕', path: '/vodtype/chinese-subtitles/' },
+];
 
 function categories() {
   var out = [];
@@ -149,12 +155,16 @@ function parseCards(html) {
   return items;
 }
 
-function listPage(page, keyword) {
+function listPage(page, keyword, category) {
   var p = Number(page) || 1;
   if (p < 1) p = 1;
   if (p > 5000) p = 5000;
   var word = String(keyword || '').trim();
-  var path = word !== '' ? '/vodsearch/?wd=' + encodeURIComponent(word) : (p > 1 ? '/?page=' + p : '/');
+  var base = '/';
+  for (var i = 0; i < CATEGORIES.length; i++) {
+    if (CATEGORIES[i].id === String(category || '')) base = CATEGORIES[i].path;
+  }
+  var path = word !== '' ? '/vodsearch/?wd=' + encodeURIComponent(word) : (p > 1 ? base + '?page=' + p : base);
   var html = fetchPage(path);
   var items = parseCards(html);
   return { items: items, hasMore: items.length >= 16 };
@@ -164,7 +174,7 @@ function catalogPage(page, category, query) {
   if (String(category || '') !== '' && !validCategory(category)) {
     throw new Error(SITE_NAME + ' 不支持分类：' + category);
   }
-  return listPage(page, query);
+  return listPage(page, query, category);
 }
 
 // 宿主调用的是 search(page, query)

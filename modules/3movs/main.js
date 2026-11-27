@@ -280,7 +280,9 @@ function detail(sourceId) {
     cover: cover,
     coverUrl: cover,
     channelName: SITE_NAME,
-    categoryName: splitList(categoriesText)[0] || '视频',
+    // 分类名必须固定：App 会按 categoryName 聚合出「分类」，
+    // 之前把每个视频的第一个标签当分类，看一个视频就多出一个分类（用户实测）。
+    categoryName: '视频',
     tags: tags,
     totalEpisode: 1,
     episodeCount: 1,

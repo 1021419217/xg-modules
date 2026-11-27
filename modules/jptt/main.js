@@ -11,7 +11,12 @@ const SITE_NAME = '禁片天堂';
 const UA =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36';
 
-const CATEGORIES = [{ id: 'latest', name: '最新更新', path: '/cn' }];
+const CATEGORIES = [
+  { id: 'latest', name: '最新更新', path: '/cn' },
+  { id: 'today', name: '今日人气', path: '/cn/list?sort=3' },
+  { id: 'week', name: '本周人气', path: '/cn/list?sort=4' },
+  { id: 'month', name: '本月人气', path: '/cn/list?sort=5' },
+];
 
 function categories() {
   var out = [];
@@ -131,12 +136,19 @@ function parseCards(html) {
   return items;
 }
 
-function listPage(page, keyword) {
+function listPage(page, keyword, category) {
   var p = Number(page) || 1;
   if (p < 1) p = 1;
   if (p > 5000) p = 5000;
   var word = String(keyword || '').trim();
-  var path = word !== '' ? '/cn/search?kw=' + encodeURIComponent(word) + (p > 1 ? '&page=' + p : '') : '/cn' + (p > 1 ? '?page=' + p : '');
+  var base = '/cn';
+  for (var i = 0; i < CATEGORIES.length; i++) {
+    if (CATEGORIES[i].id === String(category || '')) base = CATEGORIES[i].path;
+  }
+  var separator = base.indexOf('?') >= 0 ? '&' : '?';
+  var path = word !== ''
+    ? '/cn/search?kw=' + encodeURIComponent(word) + (p > 1 ? '&page=' + p : '')
+    : base + (p > 1 ? separator + 'page=' + p : '');
   var html = fetchPage(path);
   var items = parseCards(html);
   return { items: items, hasMore: items.length >= 20 };
@@ -146,7 +158,7 @@ function catalogPage(page, category, query) {
   if (String(category || '') !== '' && !validCategory(category)) {
     throw new Error(SITE_NAME + ' 不支持分类：' + category);
   }
-  return listPage(page, query);
+  return listPage(page, query, category);
 }
 
 // 宿主调用的是 search(page, query)
