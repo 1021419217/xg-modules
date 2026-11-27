@@ -1,0 +1,21 @@
+{
+  "id": "chinax",
+  "name": "中国X站",
+  "version": "1.0.0",
+  "description": "中国X站 - 高清国产AV · 分类搜索",
+  "runtime": "js",
+  "api": 1,
+  "adult": true,
+  "hosts": [
+    "chinaxmovie.com",
+    "www.chinaxmovie.com"
+  ],
+  "capabilities": [
+    "search"
+  ],
+  "aliases": [
+    "chinaxmovie.com",
+    "www.chinaxmovie.com"
+  ],
+  "baseUrl": "https://chinaxmovie.com"
+}
