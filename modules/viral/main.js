@@ -177,6 +177,59 @@ module.exports = {
     const drama = toDrama({ sourceId: sourceId, title: title, cover: og ? shrinkCover(og[1]) : '' });
     drama.desc = desc ? clean(desc[1]).substring(0, 200) : '';
 
+    // 页面有多个 ld+json 块（WebSite/Organization 在第一块，VideoObject 在后面），
+    // 必须全部遍历，只抓第一块会拿到没有 VideoObject 的导航结构。
+    var videoLd = null;
+    var ldPattern = /<script type="application\/ld\+json">\s*(\{[\s\S]*?\})\s*<\/script>/g;
+    var ldMatch;
+    while ((ldMatch = ldPattern.exec(html)) !== null && !videoLd) {
+      try {
+        var graph = JSON.parse(ldMatch[1])['@graph'] || [];
+        for (var gi = 0; gi < graph.length; gi++) {
+          if (graph[gi]['@type'] === 'VideoObject') { videoLd = graph[gi]; break; }
+        }
+      } catch (_) {}
+    }
+    if (videoLd) {
+      var iso = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/.exec(String(videoLd.duration || ''));
+      if (iso) {
+        var pad = function (n) { return n < 10 ? '0' + n : String(n); };
+        var hh = Number(iso[1] || 0), mm = Number(iso[2] || 0), ss = Number(iso[3] || 0);
+        drama.durationText = hh > 0 ? hh + ':' + pad(mm) + ':' + pad(ss) : mm + ':' + pad(ss);
+      }
+      var uploaded = String(videoLd.uploadDate || videoLd.datePublished || '').match(/\d{4}-\d{2}-\d{2}/);
+      if (uploaded) drama.onlineDate = uploaded[0];
+      var ldActors = Array.isArray(videoLd.actor) ? videoLd.actor : [];
+      var actors = [];
+      var authorIds = [];
+      for (var ai = 0; ai < ldActors.length && actors.length < 8; ai++) {
+        var name = clean(ldActors[ai] && ldActors[ai].name);
+        if (!name) continue;
+        actors.push(name);
+        var slug = /\/models\/([^"\/?#]+)/.exec(String(ldActors[ai].url || ''));
+        authorIds.push(slug ? slug[1] : '');
+      }
+      if (actors.length > 0) {
+        drama.actors = actors;
+        drama.author = actors[0];
+        drama.authorId = authorIds[0];
+      }
+    }
+
+    // 信息区（铁律 4 第 2 级）：<h3 class="vx-name-thumb">标签:</h3> 后面的 vx-list-tags。
+    // 注意 a 标签文本两侧缩进空白可达 30+ 字符，跨度不能用 {1,40}，用 [^<] 非标签字符。
+    var tagsZone = html.match(/<h3 class="vx-name-thumb">\s*标签\s*:?\s*<\/h3>[\s\S]{0,2000}?<ul class="vx-list-tags">([\s\S]*?)<\/ul>/);
+    if (tagsZone) {
+      var tags = [];
+      var tagRe = /<a\s[^>]*>\s*([^<]{1,80}?)\s*<\/a>/g;
+      var tagM;
+      while ((tagM = tagRe.exec(tagsZone[1])) !== null && tags.length < 12) {
+        var tag = clean(tagM[1]);
+        if (tag && tags.indexOf(tag) < 0) tags.push(tag);
+      }
+      if (tags.length > 0) drama.tags = tags;
+    }
+
     // 详情页已经打开了：顺手把时长和文件大小缓存好，播放时就不用再请求。
     try {
       host.cacheSet('streams:' + info.id, JSON.stringify(pickStreams(html)), 30 * 60 * 1000);
