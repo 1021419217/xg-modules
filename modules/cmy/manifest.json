@@ -1,0 +1,22 @@
+{
+  "id": "cmy",
+  "name": "绅士风度",
+  "version": "1.0.0",
+  "description": "绅士风度 - 分类视频 · 在线搜索",
+  "runtime": "js",
+  "api": 1,
+  "adult": true,
+  "hosts": [
+    "cmy6666.com",
+    "www.cmy6666.com"
+  ],
+  "capabilities": [
+    "search"
+  ],
+  "aliases": [
+    "cmy6666.com",
+    "www.cmy6666.com"
+  ],
+  "baseUrl": "https://cmy6666.com",
+  "allowEmptyCatalog": false
+}
