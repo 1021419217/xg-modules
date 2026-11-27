@@ -197,6 +197,18 @@ function metaOf(html, name) {
 }
 
 function streamOf(html) {
+  // 正片地址在苹果CMS播放器变量 player_aaaa 的 url 字段里。
+  // 页面上其他 m3u8 全是侧栏"猜你喜欢"卡片悬浮预览（data-src），
+  // 全页第一个 m3u8 就是第一张推荐卡的预览——曾导致所有视频都播同一个。
+  var boxed = /var\s+player_aaaa\s*=\s*(\{[\s\S]*?\})\s*<\/script>/.exec(html);
+  if (boxed) {
+    try {
+      var data = JSON.parse(boxed[1]);
+      var url = String(data.url || '').trim();
+      if (/^https?:\/\/[^"'\s<>]+\.m3u8/i.test(url)) return url;
+    } catch (_) {}
+  }
+  // 兜底：极少数页面没有 player_aaaa 时退回旧逻辑（有误抓预览的风险）。
   var matched = /(https?:\/\/[^"'\s<>]+\.m3u8[^"'\s<>]*)/i.exec(html);
   return matched ? matched[1] : '';
 }

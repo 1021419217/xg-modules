@@ -159,47 +159,17 @@ function parseActors(html) {
   return out;
 }
 
-// ── 播放列表 ────────────────────────────────────────────────
-function m3u8DurationMs(text) {
-  let total = 0;
-  const re = /#EXTINF:([0-9.]+)/g;
-  let m;
-  while ((m = re.exec(text)) !== null) total += parseFloat(m[1]) || 0;
-  return Math.round(total * 1000);
-}
-
+// ── 播放地址 ────────────────────────────────────────────────
+// 详情页里只含 /hls/{hash}/master.m3u8，hash 不会过期；
+// 真正的 variant（index.m3u8?n=时间戳+签名）是时效链接，
+// 所以这里只缓存 hash，master 留给播放器/宿主在起播时现取——
+// 签名永远新鲜，不再出现缓存过的播放地址过期后播不了。
 function hlsHash(html) {
   const m = String(html || '').match(/\/hls\/([0-9a-f]{10,16})\/master\.m3u8/);
   return m ? m[1] : '';
 }
 
-function playlistBundle(code) {
-  const page = SITE + '/video/' + code;
-  const html = get('/video/' + code);
-  const hash = hlsHash(html);
-  if (!hash) throw new Error('MyJav 未返回播放地址');
-  const masterUrl = SITE + '/hls/' + hash + '/master.m3u8';
-  const master = get(masterUrl);
-  let bestUrl = '';
-  let bestBandwidth = -1;
-  const lines = master.split(/\r?\n/);
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].trim();
-    if (!line || line.charAt(0) === '#') continue;
-    const prev = (lines[i - 1] || '').trim();
-    const bandwidth = Number((prev.match(/BANDWIDTH=(\d+)/) || [])[1] || 0);
-    const absolute = line.indexOf('http') === 0
-      ? line
-      : masterUrl.replace(/master\.m3u8.*$/, '') + line;
-    if (bandwidth > bestBandwidth) { bestBandwidth = bandwidth; bestUrl = absolute; }
-  }
-  if (!bestUrl) return { url: masterUrl, playlist: master, durationMs: m3u8DurationMs(master) };
-  const variant = get(bestUrl);
-  if (variant.indexOf('#EXTM3U') < 0) throw new Error('MyJav 播放列表无效');
-  return { url: bestUrl, playlist: variant, durationMs: m3u8DurationMs(variant) };
-}
-
-function cacheKey(code) { return 'playlist:' + code; }
+function cacheKey(code) { return 'hls:' + code; }
 
 module.exports = {
   validCategory(category) {
@@ -296,10 +266,11 @@ module.exports = {
       referer: page
     };
 
-    try {
-      host.cacheSet(cacheKey(code), JSON.stringify(playlistBundle(code)), 10 * 60 * 1000);
-    } catch (e) {
-      host.log('MyJav 预取播放列表失败: ' + e.message);
+    // 只存 hash（不过期）。播放列表交给播放器起播时现取，
+    // 详情阶段不再预取 master/variant——那两次请求正是“转两圈”的主因。
+    const hash = hlsHash(html);
+    if (hash) {
+      try { host.cacheSet(cacheKey(code), hash, 24 * 60 * 60 * 1000); } catch (e) {}
     }
     return { drama: drama, chapters: [chapter] };
   },
@@ -315,19 +286,23 @@ module.exports = {
     code = String(code || '').trim();
     if (!code) throw new Error('无法确定视频编号');
 
-    let bundle = null;
+    let hash = '';
     try {
       const cached = host.cacheGet(cacheKey(code));
-      if (cached) bundle = JSON.parse(cached);
-    } catch (e) { bundle = null; }
-    if (!bundle || !bundle.url || !bundle.playlist) {
-      bundle = playlistBundle(code);
-      try { host.cacheSet(cacheKey(code), JSON.stringify(bundle), 10 * 60 * 1000); } catch (e) {}
+      if (cached) hash = String(cached);
+    } catch (e) { hash = ''; }
+    if (!hash) {
+      hash = hlsHash(get('/video/' + code));
+      if (hash) {
+        try { host.cacheSet(cacheKey(code), hash, 24 * 60 * 60 * 1000); } catch (e) {}
+      }
     }
+    if (!hash) throw new Error('MyJav 未返回播放地址');
+
+    // 直接给 master.m3u8：宿主起播时现抓，variant 签名永远新鲜；
+    // 单码率站让播放器自己解析相对路径，不再多消耗两个模块侧请求。
     return host.prepareWebMedia({
-      url: bundle.url,
-      playlist: bundle.playlist,
-      durationMs: bundle.durationMs,
+      url: SITE + '/hls/' + hash + '/master.m3u8',
       referer: SITE + '/video/' + code
     });
   }
