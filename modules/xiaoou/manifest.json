@@ -1,0 +1,29 @@
+{
+  "id": "xiaoou",
+  "name": "小欧视频",
+  "version": "1.0.0",
+  "description": "小欧视频 - 分类视频 · 在线搜索",
+  "runtime": "js",
+  "api": 1,
+  "adult": true,
+  "hosts": [
+    "xiaoou.tv",
+    "www.xiaoou.tv",
+    "vod.xiaoou.io",
+    "*.xiaoou.io",
+    "*.jqpz7197.xyz",
+    "jqpz7197.xyz",
+    "*.lujn9791.xyz",
+    "lujn9791.xyz",
+    "*.vogt3458.xyz",
+    "vogt3458.xyz"
+  ],
+  "capabilities": [
+    "search"
+  ],
+  "aliases": [
+    "xiaoou.tv",
+    "www.xiaoou.tv"
+  ],
+  "baseUrl": "https://xiaoou.tv"
+}

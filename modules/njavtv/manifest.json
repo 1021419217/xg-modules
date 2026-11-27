@@ -1,0 +1,23 @@
+{
+  "id": "njavtv",
+  "name": "nJAV",
+  "version": "1.0.0",
+  "description": "nJAV - 高清 AV 在线看 · 分类搜索",
+  "runtime": "js",
+  "api": 1,
+  "adult": true,
+  "hosts": [
+    "njavtv.com",
+    "www.njavtv.com",
+    "c.surrit.com",
+    "d.surrit.com"
+  ],
+  "capabilities": [
+    "search"
+  ],
+  "aliases": [
+    "njavtv.com",
+    "www.njavtv.com"
+  ],
+  "baseUrl": "https://njavtv.com"
+}
