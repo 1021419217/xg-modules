@@ -205,9 +205,26 @@ module.exports = {
       for (var ai = 0; ai < ldActors.length && actors.length < 8; ai++) {
         var name = clean(ldActors[ai] && ldActors[ai].name);
         if (!name) continue;
+        // 站点的 JSON-LD 演员名常是短名（Luna），但真实模特页是完整名（Luna Doll）——
+        // 标题尾部「- 模特名」与短名前缀匹配时，用完整名 + 对应 slug，
+        // 否则演员页对不上（用户实测 Luna 索引到错误内容）。
+        var titleTail = /(?:^|[-–—]\s*)([^-–—]{2,40})\s*$/.exec(String(drama.title || ''));
+        if (titleTail) {
+          var tail = titleTail[1].trim();
+          var tailLower = tail.toLowerCase();
+          var nameLower = name.toLowerCase();
+          if (tailLower.indexOf(nameLower) === 0 && tailLower.length > nameLower.length && /^[A-Za-z0-9 .'-]+$/.test(tail)) {
+            name = tail;
+          }
+        }
         actors.push(name);
         var slug = /\/models\/([^"\/?#]+)/.exec(String(ldActors[ai].url || ''));
-        authorIds.push(slug ? slug[1] : '');
+        var authorId = slug ? slug[1] : '';
+        // 演员名被标题尾名增强时，slug 同步换成完整名的 slug（与站点 models 路由一致：小写、空格转-）
+        if (name !== clean(ldActors[ai] && ldActors[ai].name)) {
+          authorId = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+        }
+        authorIds.push(authorId);
       }
       if (actors.length > 0) {
         drama.actors = actors;
@@ -287,38 +304,58 @@ module.exports = {
     }
     const info = detailKey(sourceId);
     const page = SITE + info.path;
-
-    // CDN 路径由视频 id 决定、不需要 token（实测 200/206 + ftypisom）
     const vid = info.id;
-    const band = String(Math.floor(Number(vid) / 1000) * 1000);
 
-    // 清晰度固定 720p。
-    // 三档实测：1080p=1920x1080/6.8Mbps(34.7MB)、720p=1280x720/3.3Mbps(17.1MB)、480p=854x480。
-    // 1080p 体积是 720p 的两倍，整段缓冲要慢一倍，实测体验反而更差，所以用 720p。
-    const tier = '_720p';
-    const quality = 720;
-    const mp4 = 'https://sextape.viralxxxporn.com/contents/videos/' + band + '/' + vid + '/' + vid + tier + '.mp4';
+    // 播放地址优先用详情页 flashvars 的真实地址（detail 已缓存 'streams:'）。
+    // 不能再按 id 硬拼 sextape CDN 直链：部分视频没有 720p 档（如 237457 只有
+    // 480p+1080p），拼出来的 _720p.mp4 直接 404；网页播放走的是 get_file 带token 链接。
+    let streamUrl = '';
+    try {
+      const cached = host.cacheGet('streams:' + vid);
+      if (cached) {
+        const list = JSON.parse(cached);
+        if (Array.isArray(list)) {
+          // video_alt_url(中档，多数是 720p) 优先，其次 alt2，最后 url(基础档)
+          const order = list.slice().sort(function (a, b) {
+            const rank = { '720p': 0, '1080p': 1, '480p': 2 };
+            return (rank[a.name] !== undefined ? rank[a.name] : 9) - (rank[b.name] !== undefined ? rank[b.name] : 9);
+          });
+          if (order.length > 0 && /^https?:/.test(order[0].url)) streamUrl = order[0].url;
+        }
+      }
+    } catch (e) { streamUrl = ''; }
 
-    // 时长和文件大小在详情页阶段就缓存好；播放时零请求
+    // 无缓存（用户直接从历史记录进播放）→ 现抓详情页解析 flashvars，token 保证新鲜
+    if (streamUrl === '') {
+      try {
+        const html = get(info.path);
+        const list = pickStreams(html);
+        if (list.length > 0) {
+          streamUrl = list[0].url;
+          try { host.cacheSet('streams:' + vid, JSON.stringify(list), 10 * 60 * 1000); } catch (e) {}
+        }
+      } catch (e) { /* 落到兜底 */ }
+    }
+
+    // 兜底：flashvars 也没有（极少）才按 id 规律拼 CDN 直链
+    if (streamUrl === '') {
+      const band = String(Math.floor(Number(vid) / 1000) * 1000);
+      streamUrl = 'https://sextape.viralxxxporn.com/contents/videos/' + band + '/' + vid + '/' + vid + '_720p.mp4';
+    }
+
+    // 时长和文件大小在详情页阶段就缓存好
     let durationMs = 0;
-    let totalSize = 0;
     try {
       const d = host.cacheGet('duration:' + vid);
       if (d) durationMs = Number(d) || 0;
-      const s = host.cacheGet('size:' + vid);
-      if (s) totalSize = Number(s) || 0;
-    } catch (e) { durationMs = 0; totalSize = 0; }
+    } catch (e) { durationMs = 0; }
 
-    const seconds = durationMs > 0 ? Math.max(1, Math.round(durationMs / 1000)) : 0;
-
-    // 不包 HLS，直接给 MP4。
-    // HLS 的分片是原子的：拖到 80% 就得把分片从头下到 80% 才能播（17 MB → 十几秒转圈）。
+    // 不包 HLS，直接给 MP4（get_file 地址会 302 到真实 CDN，播放器跟随即可）。
     // 普通 MP4 走 HTTP Range，拖到哪取哪，seek 是瞬间的。
-    // 注意：这依赖 App 的 MP4 直读路径可用（之前出过本地代理挂死的问题，重启 App 即恢复）。
     return {
-      url: mp4,
+      url: streamUrl,
       referer: page,
-      quality: quality,
+      quality: 0,
       durationMs: durationMs,
       credentials: {
         referer: page,
