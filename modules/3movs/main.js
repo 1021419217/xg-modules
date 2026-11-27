@@ -293,6 +293,31 @@ function detail(sourceId) {
     drama.authorId = actors[0];
   }
 
+  // 信息区（铁律 4 第 2 级）：icon-clock li 是时长；
+  // icon-calendar li 是相对发布时间（"6 hours ago"），换算成 yyyy-MM-dd。
+  var clock = /icon-clock"><\/i>\s*<span>\s*([0-9]{1,2}:[0-9]{2}(?::[0-9]{2})?)\s*<\/span>/.exec(html);
+  if (clock) drama.durationText = clock[1];
+  var ago = /icon-calendar"><\/i>\s*<span>\s*([\w\s]+?)\s*<\/span>/.exec(html);
+  if (ago) {
+    var phrase = ago[1].toLowerCase();
+    var units = { minute: 60, hour: 3600, day: 86400, week: 604800, month: 2592000, year: 31536000 };
+    var seconds = 0;
+    if (phrase.indexOf('yesterday') >= 0) seconds = 86400;
+    else if (phrase.indexOf('today') < 0) {
+      var qty = /([0-9]+|a|an|two|three|several)\s+(minute|hour|day|week|month|year)s?\s+ago/.exec(phrase);
+      if (qty) {
+        var names = { a: 1, an: 1, two: 2, three: 3 };
+        var n = names[qty[1]] !== undefined ? names[qty[1]] : Number(qty[1]);
+        if (n > 0 && units[qty[2]]) seconds = n * units[qty[2]];
+      }
+    }
+    if (seconds > 0) {
+      var d = new Date(Date.now() - seconds * 1000);
+      var pad = function (x) { return x < 10 ? '0' + x : String(x); };
+      drama.onlineDate = d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+    }
+  }
+
   var stream = flashValue(html, 'video_url');
   if (stream !== '') {
     try {

@@ -190,8 +190,9 @@ function streamOf(html) {
 function detail(sourceId) {
   var slug = String(sourceId || '').trim();
   if (!/^[A-Za-z0-9_-]{2,60}$/.test(slug)) throw new Error(SITE_NAME + ' 视频 ID 无效');
-  var pageUrl = SITE + '/cn/video/' + slug;
-  var html = fetchPage('/cn/video/' + slug);
+  // 标签区块（tag_list）只出现在 /video/ 路径的页面；/cn/video/ 是同一页面但没有标签区。
+  var pageUrl = SITE + '/video/' + slug;
+  var html = fetchPage('/video/' + slug);
 
   var title = metaOf(html, 'og:title');
   if (title === '') {
@@ -205,6 +206,26 @@ function detail(sourceId) {
   var serialMatched = /^([A-Za-z]{2,8}-[0-9]{2,6})/.exec(slug);
   if (serialMatched) serial = serialMatched[1].toUpperCase();
 
+  // 铁律 4：先找 JSON-LD——时长（PT2H33M12S）和上传日期全在里面，页面其他地方没有。
+  var durationText = '';
+  var onlineDate = '';
+  var ld = /<script type="application\/ld\+json">\s*(\{[\s\S]*?\})\s*<\/script>/.exec(html);
+  if (ld) {
+    try {
+      var schema = JSON.parse(ld[1]);
+      var iso = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/.exec(String(schema.duration || ''));
+      if (iso) {
+        var pad = function (n) { return n < 10 ? '0' + n : String(n); };
+        var h = Number(iso[1] || 0), m = Number(iso[2] || 0), sec = Number(iso[3] || 0);
+        durationText = h > 0
+          ? h + ':' + pad(m) + ':' + pad(sec)
+          : m + ':' + pad(sec);
+      }
+      var uploaded = String(schema.uploadDate || '').match(/\d{4}-\d{2}-\d{2}/);
+      if (uploaded) onlineDate = uploaded[0];
+    } catch (_) {}
+  }
+
   var drama = {
     id: host.dramaId(slug),
     source: host.source,
@@ -217,14 +238,31 @@ function detail(sourceId) {
     coverUrl: cover,
     channelName: SITE_NAME,
     categoryName: '视频',
-    tags: [],
     totalEpisode: 1,
     episodeCount: 1,
   };
   if (serial !== '') drama.serial = serial;
+  if (durationText !== '') drama.durationText = durationText;
+  if (onlineDate !== '') drama.onlineDate = onlineDate;
+
+  // 标签：正文 /tag_list?tid=N 链接（铁律 4 第 2 级：页面信息区）。
+  var tags = [];
+  var tagSeen = {};
+  var tagPattern = /href="\/tag_list\?tid=[0-9]+"[^>]*>([\s\S]{1,30}?)<\/a>/gi;
+  var tagMatched = tagPattern.exec(html);
+  while (tagMatched) {
+    var tag = clean(tagMatched[1]);
+    if (tag !== '' && !tagSeen[tag] && tags.length < 12) {
+      tagSeen[tag] = true;
+      tags.push(tag);
+    }
+    tagMatched = tagPattern.exec(html);
+  }
+  drama.tags = tags;
 
   var actors = [];
-  var actorPattern = /href="\/cn\/actor\?id=[0-9]+"[^>]*>([\s\S]{1,40}?)<\/a>/gi;
+  // 兼容 /video/ 与 /cn/video/ 两种页面的演员链接前缀（detail 走 /video/，无 cn）。
+  var actorPattern = /href="(?:\/cn)?\/actor\?id=[0-9]+"[^>]*>([\s\S]{1,40}?)<\/a>/gi;
   var actorMatched = actorPattern.exec(html);
   while (actorMatched) {
     var name = clean(actorMatched[1]);

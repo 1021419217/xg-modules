@@ -250,6 +250,34 @@ function detail(sourceId) {
   var actors = metaAll(html, 'og:video:actor');
   var durationText = clockText(metaOf(html, 'og:video:duration'));
   var releaseDate = metaOf(html, 'og:video:release_date');
+
+  // 详情正文的信息区：链接带 /dm{n}/ 镜像前缀、class="text-nord13"。
+  // 铁律 4：JSON-LD 没有的，从信息区补——发行商/类型/女优（有就填，没有不硬造）。
+  function pathName(encoded) {
+    try { return decodeURIComponent(encoded).trim(); } catch (_) { return encoded; }
+  }
+  var maker = '';
+  var makerLine = /<span>\s*发行商\s*[:：]?\s*<\/span>\s*<a[^>]*href="[^"]*\/makers\/([^"\/?#]+)"/i.exec(html);
+  if (makerLine) maker = pathName(makerLine[1]);
+  var tags = [];
+  var tagSeen = {};
+  var tagPattern = /href="[^"]*\/genres\/([^"\/?#]+)"[^>]*class="text-nord13[^"]*"/gi;
+  var tagMatched = tagPattern.exec(html);
+  while (tagMatched) {
+    var tag = pathName(tagMatched[1]);
+    if (tag !== '' && !tagSeen[tag]) {
+      tagSeen[tag] = true;
+      tags.push(tag);
+    }
+    tagMatched = tagPattern.exec(html);
+  }
+  if (actors.length === 0) {
+    var actressLine = /<span>\s*女优\s*[:：]?\s*<\/span>\s*<a[^>]*href="[^"]*\/actresses\/([^"\/?#]+)"/i.exec(html);
+    if (actressLine) {
+      var actress = pathName(actressLine[1]);
+      if (actress !== '') actors = [actress];
+    }
+  }
   var serial = serialOf(slug);
   if (serial === '') {
     var fromTitle = /^([A-Za-z]{2,8}-[0-9]{2,6})/.exec(title);
@@ -269,12 +297,13 @@ function detail(sourceId) {
     channelName: SITE_NAME,
     categoryName: '视频',
     durationText: durationText,
-    tags: [],
+    tags: tags,
     totalEpisode: 1,
     episodeCount: 1,
   };
   if (serial !== '') drama.serial = serial;
   if (releaseDate !== '') drama.onlineDate = releaseDate;
+  if (maker !== '') drama.maker = maker;
   if (actors.length > 0) {
     drama.actors = actors;
     drama.author = actors[0];

@@ -232,6 +232,23 @@ function detail(sourceId) {
   var serialMatched = /([A-Za-z]{2,8}-[0-9]{2,6})/.exec(slug + ' ' + title);
   if (serialMatched) serial = serialMatched[1].toUpperCase();
 
+  // JSON-LD VideoObject：uploadDate / genre 可直接用（铁律 4：先找 JSON-LD）。
+  // player_aaaa.vod_class 是制作厂牌（麻豆传媒等），比 publisher.name（站点自己）更有意义。
+  var onlineDate = '';
+  var tags = [];
+  var maker = '';
+  var ld = /<script type="application\/ld\+json">\s*(\{[\s\S]*?\})\s*<\/script>/.exec(html);
+  if (ld) {
+    try {
+      var schema = JSON.parse(ld[1]);
+      var uploaded = String(schema.uploadDate || '').match(/\d{4}-\d{2}-\d{2}/);
+      if (uploaded) onlineDate = uploaded[0];
+      if (schema.genre) tags = [clean(String(schema.genre))];
+    } catch (_) {}
+  }
+  var vodClass = /"vod_class":"([^"]*)"/.exec(html);
+  if (vodClass) maker = clean(vodClass[1].replace(/\\u([0-9a-fA-F]{4})/g, function (_, h) { return String.fromCharCode(parseInt(h, 16)); }));
+
   var drama = {
     id: host.dramaId(slug),
     source: host.source,
@@ -244,11 +261,13 @@ function detail(sourceId) {
     coverUrl: cover,
     channelName: SITE_NAME,
     categoryName: '视频',
-    tags: [],
+    tags: tags,
     totalEpisode: 1,
     episodeCount: 1,
   };
   if (serial !== '') drama.serial = serial;
+  if (onlineDate !== '') drama.onlineDate = onlineDate;
+  if (maker !== '') drama.maker = maker;
 
   var stream = streamOf(html);
   if (stream !== '') {

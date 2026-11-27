@@ -233,6 +233,8 @@ module.exports = {
       cover: cover ? cover[1] : '',
       totalEpisode: 1
     };
+    // sourceId 本身就是番号（SNOS-482 / 10musume-112026_01）
+    if (/^[A-Za-z][A-Za-z0-9_.]*-\d/.test(code)) drama.serial = code.toUpperCase();
 
     try {
       const actors = parseActors(html);
