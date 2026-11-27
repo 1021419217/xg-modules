@@ -259,7 +259,9 @@ function catalogPage(page, category, query) {
   return listPage(page, category, query);
 }
 
-function search(query, page) {
+// 参数顺序必须跟宿主一致：宿主调用的是 search(page, query)。
+// （写反的话关键词会被当成页码，所有搜索都返回同一批——2026-11-28 用户实测踩到）
+function search(page, query) {
   return listPage(page, '', query);
 }
 
