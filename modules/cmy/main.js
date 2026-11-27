@@ -11,7 +11,11 @@
 //   游客只有 25 秒试看，完整版要登录并开通 VIP。接口返回的 limitSeconds
 //   就是 25，媒体文件本身也只有几 MB。模块如实播放站点给的地址。
 
-const SITE = 'https://cmy6666.com';
+// 主站 + 官方备用线路（首页底部「获取最新地址」给的 abc111.club，同一套后端、
+// 同样的 csrf 与详情结构）。站点对游客限流很严：HTTP 429 + Retry-After 约 5 分钟，
+// 而宿主的退避是按域名记的，所以一条线被限就换另一条，能立刻恢复。
+const SITES = ['https://cmy6666.com', 'https://abc111.club'];
+const SITE = SITES[0];
 const SITE_NAME = '绅士风度';
 const UA =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36';
@@ -109,34 +113,64 @@ function serialOf(title) {
 
 // ---------- 页面请求 ----------
 
-function fetchPage(path) {
-  var response;
+function orderedSites() {
+  var preferred = '';
   try {
-    response = host.fetch({
-      url: SITE + path,
-      headers: {
-        Accept:
-          'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-        'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
-        Referer: SITE + '/',
-        'User-Agent': UA,
-      },
-      anyStatus: true,
-      followRedirects: true,
-      timeoutMs: 25000,
-    });
-  } catch (error) {
-    var failure = new Error(SITE_NAME + ' 连接失败，请检查网络：' + (error && error.message ? error.message : error));
-    failure.retryable = true;
-    throw failure;
+    preferred = String(host.cacheGet('site') || '');
+  } catch (_) {}
+  var list = [];
+  for (var i = 0; i < SITES.length; i++) if (SITES[i] === preferred) list.push(SITES[i]);
+  for (var j = 0; j < SITES.length; j++) if (SITES[j] !== preferred) list.push(SITES[j]);
+  return list;
+}
+
+function fetchPage(path) {
+  var sites = orderedSites();
+  var lastError = null;
+  for (var i = 0; i < sites.length; i++) {
+    var site = sites[i];
+    var response;
+    try {
+      response = host.fetch({
+        url: site + path,
+        headers: {
+          Accept:
+            'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+          'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+          Referer: site + '/',
+          'User-Agent': UA,
+        },
+        anyStatus: true,
+        followRedirects: true,
+        timeoutMs: 25000,
+      });
+    } catch (error) {
+      var failure = new Error(SITE_NAME + ' 连接失败，请检查网络：' + (error && error.message ? error.message : error));
+      failure.retryable = true;
+      lastError = failure;
+      continue;
+    }
+    var status = Number(response.status) || 0;
+    // 429 是站点限流（Retry-After 约 5 分钟）：这条线换掉，试下一条。
+    if (status === 429 || status >= 500) {
+      lastError = new Error(SITE_NAME + ' 请求过于频繁，正在切换线路');
+      lastError.retryable = true;
+      continue;
+    }
+    if (status >= 400) {
+      lastError = new Error(SITE_NAME + ' 返回 HTTP ' + status);
+      lastError.retryable = status === 408;
+      continue;
+    }
+    try {
+      host.cacheSet('site', site, 1800000);
+    } catch (_) {}
+    return { html: String(response.body || ''), headers: response.headers || {}, site: site };
   }
-  var status = Number(response.status) || 0;
-  if (status >= 400) {
-    var problem = new Error(SITE_NAME + ' 返回 HTTP ' + status);
-    problem.retryable = status >= 500 || status === 408 || status === 429;
-    throw problem;
-  }
-  return { html: String(response.body || ''), headers: response.headers || {} };
+  if (lastError) throw lastError;
+  var blocked = new Error(SITE_NAME + ' 所有线路都不可用，请稍后重试');
+  blocked.retryable = true;
+  throw blocked;
 }
 
 // ---------- 列表 ----------
@@ -260,7 +294,13 @@ function cookieHeader(headers) {
 function detail(sourceId) {
   var id = slugOf(sourceId);
   if (id === '') throw new Error(SITE_NAME + ' 视频 ID 无效');
+  // 5 分钟内重复打开同一个视频直接复用，减少对站点的请求（它的游客限流很严）。
+  try {
+    var memo = host.cacheGet('detail:' + id);
+    if (memo) return JSON.parse(String(memo));
+  } catch (_) {}
   var response = fetchPage('/episode/show/' + id);
+  var site = response.site || SITE;
   var html = response.html;
   var props = propsOf(html);
 
@@ -321,11 +361,11 @@ function detail(sourceId) {
   var cookie = cookieHeader(response.headers);
   if (token !== '' && cookie !== '') {
     try {
-      host.cacheSet('session:' + id, JSON.stringify({ token: token, cookie: cookie }), 240000);
+      host.cacheSet('session:' + id, JSON.stringify({ token: token, cookie: cookie, site: site }), 240000);
     } catch (_) {}
   }
 
-  return {
+  var result = {
     drama: drama,
     chapters: [
       {
@@ -333,10 +373,14 @@ function detail(sourceId) {
         source: host.source,
         title: '正片',
         currentEpisode: 1,
-        pageUrl: SITE + '/episode/show/' + id,
+        pageUrl: site + '/episode/show/' + id,
       },
     ],
   };
+  try {
+    host.cacheSet('detail:' + id, JSON.stringify(result), 300000);
+  } catch (_) {}
+  return result;
 }
 
 // ---------- 播放 ----------
@@ -353,18 +397,19 @@ function sessionFor(id) {
     var cached = host.cacheGet('session:' + id);
     if (cached) {
       var parsed = JSON.parse(String(cached));
-      if (parsed && parsed.token && parsed.cookie) return parsed;
+      if (parsed && parsed.token && parsed.cookie && parsed.site) return parsed;
     }
   } catch (_) {}
   var response = fetchPage('/episode/show/' + id);
-  return { token: csrfToken(response.html), cookie: cookieHeader(response.headers) };
+  return { token: csrfToken(response.html), cookie: cookieHeader(response.headers), site: response.site || SITE };
 }
 
 function resolveMedia(task) {
   var id = taskId(task);
   if (id === '') throw new Error(SITE_NAME + ' 缺少视频 ID，请刷新详情');
-  var pageUrl = SITE + '/episode/show/' + id;
   var session = sessionFor(id);
+  var site = session.site || SITE;
+  var pageUrl = site + '/episode/show/' + id;
   if (!session.token || !session.cookie) {
     throw new Error(SITE_NAME + ' 会话建立失败，请稍后重试');
   }
@@ -373,14 +418,14 @@ function resolveMedia(task) {
   try {
     response = host.fetch({
       method: 'POST',
-      url: SITE + '/episode/guest_play/' + id,
+      url: site + '/episode/guest_play/' + id,
       headers: {
         Accept: 'application/json, text/plain, */*',
         'Content-Type': 'application/json',
         'X-CSRF-Token': session.token,
         'X-Requested-With': 'XMLHttpRequest',
         Cookie: session.cookie,
-        Origin: SITE,
+        Origin: site,
         Referer: pageUrl,
         'User-Agent': UA,
       },
@@ -421,7 +466,7 @@ function resolveMedia(task) {
     referer: pageUrl,
     quality: 0,
     credentials: {
-      origin: SITE,
+      origin: site,
       referer: pageUrl,
       userAgent: UA,
       cookie: session.cookie,
