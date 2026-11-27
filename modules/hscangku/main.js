@@ -18,20 +18,18 @@
 // 主域名会换（111 → 222 …）。旧域名收到任何路径的请求都会 301 到「根路径」，
 // 把 /vodsearch/…?wd=、/vodtype/…、/v5/… 整段丢掉 —— 于是搜索不管输什么
 // 都返回首页那批视频，分类和详情也一样。所以这里放域名池，谁能用就用谁。
-let SITE = 'https://222.ajmck.cc';
+let SITE = 'https://huangsecangku.net';
 const MIRRORS = [
-  // 2026-11 实测结论：
-  //   huangsecangku.net  —— 纯拼音域名，站方长期保留，最稳定，放第一
-  //   111.ajsck.cc       —— 可用（注意是 ajsck，不是 ajmck，差一个字母就完全不是这个站）
-  //   222.9990hsck.cc    —— 可用；数字前缀那批是轮换镜像
-  //   其余数字域名多数已失效（详情页 301 跳首页）或变成广告站，只做兜底
+  // 2026-11-27 逐个实测「搜索页」（不再只看首页，旧域名首页 200 但搜索 301）：
+  //   huangsecangku.net / 222.ajuck.cc —— 搜索页正常返回卡片，可用，放前两位
+  //   其余域名（含 111.ajsck / 222.9990hsck / 111.ajlck / 222.ajmck 等）
+  //   收到搜索/详情路径一律 301 跳首页，已失效，保留仅作兜底。
   'https://huangsecangku.net',
+  'https://222.ajuck.cc',
   'https://111.ajsck.cc',
-  'https://222.9990hsck.cc',
-  'https://222.9981hsck.cc',
+  'https://222.9992hsck.cc',
   'https://111.ajjck.cc',
   'https://222.ajjck.cc',
-  'https://hsccck.cc',
   'https://111.ajlck.cc'
 ];
 let mirrorIndex = 0;
@@ -61,16 +59,20 @@ function clean(s) {
     .trim();
 }
 
-// 首页标题是固定的「黄色仓库-hsck.tv」，其它页面的标题都会带内容后缀。
-// 请求的不是根路径、却拿到这个标题，就说明被 301 甩回首页了 —— 结果不能用。
+// 首页标题是「纯站点名」（如「黄色仓库-hsck.pw」，后面没有任何内容后缀）；
+// 搜索/分类/详情页的标题都是「黄色仓库-hsck.pw - 搜索xxx」/「- 片名」这种带后缀的形式。
+// 请求的不是根路径、却拿到纯站点名标题，才说明被 301 甩回首页了。
+// 注意：旧写法只判断前缀 ^黄色仓库-hsck\. 会把正常的搜索页（同样以站点名开头）
+// 误判成首页，导致所有域名都被跳过 → 搜索报「被重定向到首页」。必须要求
+// 标题「整体」就是站点名，不带 ' - ' / '_' 等任何后缀。
 function looksLikeHome(body, path) {
   if (!path || path === '/' || path === '') return false;
   const t = String(body || '').match(/<title[^>]*>([\s\S]{0,160}?)<\/title>/i);
   if (!t) return false;
-  const title = t[1].replace(/\s+/g, '');
-  // 站点标题形如「黄色仓库-hsck.pw」/「黄色仓库-hsck.tv」，后缀会换，
-  // 原来只认 .tv 导致 301 回首页的内容被当成正常页面（标题变成站点名、日期全错）。
-  return /^黄色仓库[-_—]?hsck\./i.test(title) || /^hsck\.[a-z]+[-_—]?黄色仓库$/i.test(title);
+  const title = t[1].replace(/\s+/g, '').trim();
+  // 纯站点名：黄色仓库-hsck.pw / hsck.tv黄色仓库，整体匹配、无后缀内容
+  return /^黄色仓库[-_—]?hsck\.[a-z]+$/i.test(title) ||
+         /^hsck\.[a-z]+[-_—]?黄色仓库$/i.test(title);
 }
 
 function get(path, referer) {

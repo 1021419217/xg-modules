@@ -40,13 +40,20 @@ function clean(s) {
     .trim();
 }
 
-function get(path, referer) {
+function get(path, referer, allowEmpty) {
   const url = path.indexOf('http') === 0 ? path : SITE + path;
   const headers = {};
   for (const k in HEADERS) headers[k] = HEADERS[k];
   headers['Referer'] = referer || SITE + '/';
   const res = host.fetch({ method: 'GET', url: url, headers: headers });
   if (res.status === 403) throw new Error('91porny 拦了请求（403）');
+  // 站点「无搜索结果」页返回 HTTP 404，但正文是完整的「没有找到相关视频」
+  // 页面（不是错误页）。搜索场景放行这种 404，交给 parseCards 得到空结果；
+  // 其它场景仍按 4xx 报错，避免把真正失效的详情页当空列表。
+  if (allowEmpty && res.status === 404 &&
+      /没有找到相关视频|没有找到.*视频|not found/i.test(res.body || '')) {
+    return res.body || '';
+  }
   if (res.status < 200 || res.status >= 400) throw new Error('91porny 返回 HTTP ' + res.status);
   return res.body || '';
 }
@@ -384,7 +391,7 @@ module.exports = {
     const kw = clean(query || '');
     if (!kw) return { items: [], hasMore: false };
     const n = Number(page || 1) < 1 ? 1 : Number(page || 1);
-    const raw = parseCards(get('/search?keywords=' + encodeURIComponent(kw) + '&page=' + n));
+    const raw = parseCards(get('/search?keywords=' + encodeURIComponent(kw) + '&page=' + n, SITE + '/', true));
     for (const it of raw) {
       try { host.cacheSet('card:' + it.sourceId, JSON.stringify({ title: it.title, cover: it.cover }), 30 * 60 * 1000); } catch (e) { /* 忽略 */ }
     }
@@ -399,7 +406,7 @@ module.exports = {
     if (!kw) return { items: [], hasMore: false, warning: '缺少作者信息' };
     const n = Number(page || 1) < 1 ? 1 : Number(page || 1);
     try {
-      const raw = parseCards(get('/search?keywords=' + encodeURIComponent(kw) + '&page=' + n));
+      const raw = parseCards(get('/search?keywords=' + encodeURIComponent(kw) + '&page=' + n, SITE + '/', true));
       const items = raw.map(function (it) {
         it.author = authorName || kw;
         if (authorId) it.authorId = authorId;
