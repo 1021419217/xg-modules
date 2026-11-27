@@ -28,12 +28,121 @@ const HEADERS = {
   'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8'
 };
 
-const CATEGORIES = [
-  { id: 'hot', name: '熱門' },
+// 排序维度（沿用原有 4 个）+ 站点「热门色情片类型 / 所有色情片类型」全部 105 个分类
+const SORT_CATEGORIES = [
+  { id: 'hot', name: '热门' },
   { id: 'new', name: '最新' },
-  { id: 'week', name: '本週最多' },
-  { id: 'rated', name: '本月好評' }
+  { id: 'week', name: '本周最多' },
+  { id: 'rated', name: '本月好评' },
 ];
+const TYPE_CATEGORIES = [
+  { id: '1', name: '亚洲人' },
+  { id: '2', name: '乱交群欢' },
+  { id: '3', name: '素人' },
+  { id: '4', name: '肥臀' },
+  { id: '5', name: '风情少女' },
+  { id: '6', name: '大号美女' },
+  { id: '7', name: '巨屌' },
+  { id: '8', name: '巨乳' },
+  { id: '9', name: '金发女' },
+  { id: '10', name: '捆绑' },
+  { id: '11', name: '深发女' },
+  { id: '12', name: '名人' },
+  { id: '13', name: '口交' },
+  { id: '14', name: '集体颜射' },
+  { id: '15', name: '内射中出' },
+  { id: '16', name: '射精' },
+  { id: '17', name: '黑人女' },
+  { id: '18', name: '恋物癖' },
+  { id: '19', name: '拳交' },
+  { id: '20', name: '手交' },
+  { id: '21', name: '劲爆重口味' },
+  { id: '22', name: '手淫' },
+  { id: '23', name: '性玩具' },
+  { id: '24', name: '公众野战' },
+  { id: '25', name: '跨种族' },
+  { id: '26', name: '拉丁裔美女' },
+  { id: '27', name: '女同' },
+  { id: '28', name: '熟女' },
+  { id: '29', name: '辣妈' },
+  { id: '30', name: '色情明星' },
+  { id: '31', name: '真人实拍' },
+  { id: '32', name: '搞笑' },
+  { id: '33', name: '脱衣舞' },
+  { id: '35', name: '爆菊' },
+  { id: '36', name: '色情日漫' },
+  { id: '37', name: '18-25歲' },
+  { id: '38', name: '高清色情片' },
+  { id: '41', name: '第一视角' },
+  { id: '42', name: '红毛' },
+  { id: '43', name: '古典派' },
+  { id: '53', name: '聚会' },
+  { id: '55', name: '欧洲人' },
+  { id: '57', name: '合集' },
+  { id: '59', name: '贫乳' },
+  { id: '61', name: '视频激情' },
+  { id: '65', name: '3P' },
+  { id: '67', name: '粗暴性爱' },
+  { id: '69', name: '潮吹' },
+  { id: '72', name: '双龙入洞' },
+  { id: '73', name: '女性之选' },
+  { id: '76', name: '双性恋男' },
+  { id: '78', name: '按摩' },
+  { id: '79', name: '大学' },
+  { id: '80', name: '轮交' },
+  { id: '81', name: '角色扮演' },
+  { id: '83', name: '跨性别' },
+  { id: '86', name: '卡通' },
+  { id: '88', name: '校园' },
+  { id: '89', name: '火辣保姆' },
+  { id: '90', name: '试镜' },
+  { id: '91', name: '抽烟' },
+  { id: '92', name: '男性自慰' },
+  { id: '93', name: '恋足' },
+  { id: '94', name: '法国人' },
+  { id: '95', name: '德国人' },
+  { id: '96', name: '英国人' },
+  { id: '97', name: '意大利人' },
+  { id: '98', name: '阿拉伯人' },
+  { id: '99', name: '俄国人' },
+  { id: '100', name: '捷克人' },
+  { id: '101', name: '印度人' },
+  { id: '102', name: '巴西人' },
+  { id: '103', name: '韩国人' },
+  { id: '104', name: '虚拟现实' },
+  { id: '105', name: '60帧' },
+  { id: '108', name: '交互式' },
+  { id: '111', name: '日本人' },
+  { id: '115', name: '独家' },
+  { id: '121', name: '音乐' },
+  { id: '131', name: '舔屄' },
+  { id: '138', name: '已认证素人' },
+  { id: '139', name: '已认证模特' },
+  { id: '141', name: '片场直击' },
+  { id: '181', name: '老少欢' },
+  { id: '201', name: '滑稽模仿' },
+  { id: '211', name: '撒尿' },
+  { id: '221', name: '上班时观赏' },
+  { id: '231', name: '自述视频' },
+  { id: '241', name: 'Cosplay' },
+  { id: '242', name: '娇妻偷吃' },
+  { id: '444', name: '继家庭幻想' },
+  { id: '482', name: '已认证情侣' },
+  { id: '492', name: '女性自慰' },
+  { id: '502', name: '女性高潮' },
+  { id: '512', name: '肌肉男' },
+  { id: '522', name: '浪漫' },
+  { id: '542', name: '佩戴式阳具' },
+  { id: '562', name: '纹身女' },
+  { id: '592', name: '指交' },
+  { id: '732', name: '内嵌字幕' },
+  { id: '881', name: '赌博' },
+  { id: '891', name: '播客' },
+  { id: '921', name: '反应' },
+  { id: '1311', name: '深喉' },
+  { id: '2421', name: 'Ai生成' },
+];
+const CATEGORIES = SORT_CATEGORIES.concat(TYPE_CATEGORIES);
 
 // 标题过滤：用户上传站，挡掉明显涉及未成年/非自愿的字样（与仓库主做法一致）
 const BLOCKED = [
@@ -386,10 +495,14 @@ function toDrama(item) {
 function listPath(category, page) {
   const p = Number(page || 1) < 1 ? 1 : Number(page || 1);
   const id = !category ? 'hot' : String(category);
-  let base = '/video?o=ht';
-  if (id === 'new') base = '/video?o=mr';
+  let base;
+  if (id === 'hot') base = '/video?o=ht';
+  else if (id === 'new') base = '/video?o=mr';
   else if (id === 'week') base = '/video?o=mv&t=w';
   else if (id === 'rated') base = '/video?o=tr&t=m';
+  // 站点「热门/所有色情片类型」的分类 id 是纯数字，走 /video?c=ID
+  else if (/^[0-9]+$/.test(id)) base = '/video?c=' + id;
+  else base = '/video?o=ht';
   return base + (p > 1 ? '&page=' + p : '');
 }
 

@@ -208,9 +208,13 @@ module.exports = {
     if (actors.length > 0) drama.actors = actors;
   }
 
-  // 作者 = 上传者（member）：详情页信息区 /zh/members/{id}/ + 显示名（vx-name / vx-ava）。
-  // JSON-LD 的 actor 是站方标签（Luna），member 才是用户在网页上看到的上传者
-  // （LunaDoll，/zh/members/182452/，用户实测该页含这条视频）——两者不是一回事。
+  // 两个可点的人物入口（用户实测需求：点发布者看到的是杂乱混剪，想看同演员
+  // 必须点演员入口）。网页上演员在发布者下方，两者是不同实体：
+  //   * 演员 = 模型区「模型:」/zh/models/{slug}/  → 同演员作品（主作者入口）
+  //   * 发布者 = 上传者 /zh/members/{id}/         → 第二入口，塞进 meta 由详情页读
+  // App 只有一个 author 三件套 + 一个 author() 函数，所以用 ID 前缀区分：
+  //   model:{slug}  → author() 抓 /models/{slug}/
+  //   member:{id}   → author() 抓 /members/{id}/
   var memberName = '';
   var memberId = '';
   var memberLine = /href="[^"]*\/members\/([0-9]+)\/"[^>]*class="vx-name"[^>]*>\s*([^<]{1,60}?)\s*<\/a>/.exec(html);
@@ -225,9 +229,41 @@ module.exports = {
       memberName = clean(ava[2].replace(/\s*profile\s*$/i, ''));
     }
   }
-  if (memberName !== '' && memberId !== '') {
+
+  // 演员（模型）从「模型:」信息区解析，限制在该 <ul> 内，避免抓到相关推荐里的模型。
+  var modelName = '';
+  var modelSlug = '';
+  var modelZone = html.match(/<h3 class="vx-name-thumb">\s*模型\s*:?\s*<\/h3>[\s\S]{0,1500}?<ul class="vx-list-thumb">([\s\S]*?)<\/ul>/);
+  if (modelZone) {
+    var modelLine = /href="[^"]*\/models\/([a-z0-9-]+)\/"[^>]*class="vx-name"[^>]*>\s*([^<]{1,60}?)\s*<\/a>/.exec(modelZone[1]);
+    if (modelLine) {
+      modelSlug = modelLine[1];
+      modelName = clean(modelLine[2]);
+    }
+    if (modelName === '') {
+      var modelAva = /href="[^"]*\/models\/([a-z0-9-]+)\/"[^>]*class="vx-ava"[^>]*aria-label="([^"]*)"/.exec(modelZone[1]);
+      if (modelAva) {
+        modelSlug = modelAva[1];
+        modelName = clean(modelAva[2].replace(/\s*profile\s*$/i, ''));
+      }
+    }
+  }
+
+  if (modelName !== '' && modelSlug !== '') {
+    // 主入口 = 演员：author 三件套指向模型作品集，点进去是同演员作品。
+    drama.author = modelName;
+    drama.authorId = 'model:' + modelSlug;
+    drama.authorUrl = SITE + LOC + '/models/' + modelSlug + '/';
+    // 发布者退到第二入口：塞进 meta，由详情页第二个胶囊读取（id 用 member: 前缀）。
+    if (memberName !== '' && memberId !== '') {
+      drama.xgUploaderName = memberName;
+      drama.xgUploaderId = 'member:' + memberId;
+    }
+  } else if (memberName !== '' && memberId !== '') {
+    // 没有演员信息时回退：主入口仍是发布者。
     drama.author = memberName;
-    drama.authorId = memberId;
+    drama.authorId = 'member:' + memberId;
+    drama.authorUrl = SITE + LOC + '/members/' + memberId + '/';
   }
 
     // 信息区（铁律 4 第 2 级）：<h3 class="vx-name-thumb">标签:</h3> 后面的 vx-list-tags。
@@ -289,17 +325,33 @@ module.exports = {
   },
 
   author(authorId, authorName, page) {
-    // 作者 = 上传者（member 页 /zh/members/{id}/）。该页一次返回全部视频，无分页。
-    const id = String(authorId == null ? '' : authorId).replace(/[^0-9]/g, '');
+    // 两个入口共用这个函数，靠 ID 前缀区分（detail() 里写入 authorId）：
+    //   model:{slug}  → /zh/models/{slug}/  演员作品集（同演员，实测 12 部）
+    //   member:{id}   → /zh/members/{id}/   上传者作品集（实测混杂多个演员）
+    // 纯数字（旧版本缓存）一律当 member。两个页面都一次返回全部视频，无分页。
+    const raw = String(authorId == null ? '' : authorId).trim();
     const n = Number(page || 1) < 1 ? 1 : Number(page || 1);
-    if (!id || n > 1) return { items: [], hasMore: false };
-    const html = get(LOC + '/members/' + id + '/');
+    if (n > 1) return { items: [], hasMore: false };
+    var path = '';
+    var key = '';
+    if (raw.indexOf('model:') === 0) {
+      key = raw.slice(6);
+      if (/^[a-z0-9-]+$/.test(key)) path = LOC + '/models/' + key + '/';
+    } else if (raw.indexOf('member:') === 0) {
+      key = raw.slice(7).replace(/[^0-9]/g, '');
+      if (key) path = LOC + '/members/' + key + '/';
+    } else {
+      key = raw.replace(/[^0-9]/g, '');
+      if (key) path = LOC + '/members/' + key + '/';
+    }
+    if (!path) return { items: [], hasMore: false };
+    const html = get(path);
     const name = clean(authorName || '');
     const items = parseCards(html).map(function (it) {
       const d = toDrama(it);
       if (name) {
         d.author = name;
-        d.authorId = id;
+        d.authorId = raw;
       }
       return d;
     });

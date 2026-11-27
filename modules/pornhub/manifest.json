@@ -1,8 +1,8 @@
 {
   "id": "pornhub",
   "name": "Pornhub",
-  "version": "1.2.2",
-  "description": "Pornhub：热门 / 最新 / 本周最多 / 本月好评 + 搜索，1080p HLS。自带中文界面，详情页预取播放列表，点播放零请求。。1.2.0：新增上传者/模特识别与作者二级页。",
+  "version": "1.2.3",
+  "description": "Pornhub：热门/最新/本周/本月好评排序 + 站点全部 105 个色情类型分类 + 搜索，1080p HLS。1.2.3：补齐「热门色情片类型/所有色情片类型」下全部 105 个分类。",
   "runtime": "js",
   "api": 1,
   "adult": true,
