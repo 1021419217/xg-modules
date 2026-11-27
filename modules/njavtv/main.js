@@ -178,7 +178,9 @@ function catalogPage(page, category, query) {
   return listPage(page, category, query);
 }
 
-function search(query, page) {
+// 参数顺序跟宿主一致：宿主调用的是 search(page, query)。
+// （写成 (query, page) 会让关键词被当页码，搜索永远返回同一批）
+function search(page, query) {
   var word = String(query || '').trim();
   if (word === '') return { items: [], hasMore: false, warning: '请输入搜索关键词' };
   var result = listPage(page, '', word);
